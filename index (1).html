@@ -1,0 +1,1946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Integrity Chiropractic — Patient Care Package</title>
+<style>
+:root{
+  --navy:#2C3E5A;
+  --navy-light:#3D5273;
+  --navy-dark:#1E2E42;
+  --gold:#C9A84C;
+  --bg:#F4F6F9;
+  --white:#FFFFFF;
+  --border:#D0D7E3;
+  --border-dark:#B0BAC9;
+  --text:#1A2535;
+  --text-muted:#5A6A80;
+  --text-light:#8A9AB0;
+  --radius:6px;
+  --shadow:0 2px 8px rgba(44,62,90,.10);
+  --shadow-lg:0 4px 20px rgba(44,62,90,.15);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;min-height:100vh}
+
+/* ---- NAV TABS ---- */
+.page-header{background:var(--navy);padding:0;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.3)}
+.header-top{display:flex;align-items:center;gap:16px;padding:10px 24px 0}
+.logo-img{height:44px;width:auto;border-radius:4px}
+.clinic-title{color:white}
+.clinic-title h1{font-size:16px;font-weight:600;letter-spacing:.01em}
+.clinic-title p{font-size:10px;opacity:.65;margin-top:1px}
+.tab-bar{display:flex;gap:0;padding:0 16px;margin-top:8px;overflow-x:auto}
+.tab-btn{padding:9px 18px;font-size:12px;font-weight:500;color:rgba(255,255,255,.6);background:none;border:none;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:color .15s,border-color .15s;font-family:inherit}
+.tab-btn:hover{color:rgba(255,255,255,.9)}
+.tab-btn.active{color:white;border-bottom-color:var(--gold)}
+.tab-badge{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;background:var(--gold);border-radius:50%;font-size:9px;color:var(--navy-dark);font-weight:700;margin-left:5px;vertical-align:middle}
+
+/* ---- PAGES ---- */
+.page{display:none;padding:24px;max-width:900px;margin:0 auto}
+.page.active{display:block}
+
+/* ---- CARDS ---- */
+.card{background:var(--white);border:1px solid var(--border);border-radius:10px;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow)}
+.card-header{background:var(--navy);color:white;padding:10px 16px;display:flex;align-items:center;gap:8px}
+.card-header h3{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.07em}
+.card-header .icon{font-size:14px;opacity:.8}
+.card-body{padding:16px}
+.card-note{background:#F0F4FA;border-left:3px solid var(--navy);padding:10px 14px;font-size:11.5px;color:var(--text-muted);line-height:1.6;border-radius:0 4px 4px 0;margin-bottom:14px}
+
+/* ---- FORM FIELDS ---- */
+.field-grid{display:grid;gap:10px;margin-bottom:10px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:1fr 1fr 1fr}
+.g4{grid-template-columns:1fr 1fr 1fr 1fr}
+.g-full{grid-column:1/-1}
+.field{display:flex;flex-direction:column;gap:3px}
+.field label{font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em}
+.field label .req{color:#C0392B;margin-left:2px}
+.field input,.field select,.field textarea{border:1.5px solid var(--border);border-radius:var(--radius);padding:7px 10px;font-size:12.5px;color:var(--text);background:white;font-family:inherit;transition:border-color .15s}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 3px rgba(44,62,90,.08)}
+.field textarea{resize:vertical;min-height:60px}
+.field input.auto-filled{background:#EEF3FA;border-color:#B8C8DF}
+.radio-row{display:flex;gap:16px;padding-top:4px}
+.radio-opt{display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px}
+.radio-opt input{accent-color:var(--navy);width:auto}
+.field-hint{font-size:10px;color:var(--text-light);margin-top:1px}
+
+/* ---- SERVICE ROWS ---- */
+.tx-section-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;padding:8px 0 4px;border-bottom:1px solid var(--border);margin-bottom:8px}
+.tx-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:6px;cursor:pointer;transition:border-color .15s,background .15s;user-select:none}
+.tx-row:hover{border-color:var(--navy-light);background:#F8FAFD}
+.tx-row.active{border-color:var(--navy);background:#EEF3FA}
+.tx-check{width:18px;height:18px;border:2px solid var(--border-dark);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.tx-row.active .tx-check{background:var(--navy);border-color:var(--navy)}
+.tx-check svg{display:none;width:10px;height:10px;fill:white}
+.tx-row.active .tx-check svg{display:block}
+.tx-info{flex:1}
+.tx-name{font-size:12.5px;font-weight:500;color:var(--text)}
+.tx-tm{font-size:8px;vertical-align:super;color:var(--navy)}
+.tx-code{font-size:10px;color:var(--text-light)}
+.tx-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.tx-price{font-size:12px;font-weight:600;color:var(--navy);white-space:nowrap}
+.qty-wrap{display:none;align-items:center;gap:4px}
+.tx-row.active .qty-wrap{display:flex}
+.qty-btn{width:24px;height:24px;border:1px solid var(--border-dark);border-radius:4px;background:white;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);line-height:1;font-family:inherit;transition:all .15s}
+.qty-btn:hover{background:var(--navy);color:white;border-color:var(--navy)}
+.qty-val{font-size:12px;font-weight:600;color:var(--navy);min-width:22px;text-align:center}
+.tx-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+
+/* ---- SUMMARY CARD ---- */
+.summary-hero{background:var(--navy);border-radius:10px;padding:20px;color:white;margin-bottom:16px}
+.summary-hero h2{font-size:13px;opacity:.7;font-weight:500;text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px}
+.sum-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.sum-box{background:rgba(255,255,255,.1);border-radius:8px;padding:12px}
+.sum-box-label{font-size:10px;opacity:.7;margin-bottom:4px}
+.sum-box-val{font-size:22px;font-weight:600}
+.sum-divider{border:none;border-top:1px solid rgba(255,255,255,.2);margin:12px 0}
+.sum-row{display:flex;justify-content:space-between;font-size:11.5px;padding:3px 0;opacity:.85}
+.sum-row.bold{font-weight:600;font-size:13px;opacity:1;padding-top:6px}
+.sum-note{background:rgba(255,255,255,.12);border-radius:20px;padding:4px 12px;font-size:10px;margin-top:8px;display:inline-block}
+
+/* ---- PAYMENT OPTIONS ---- */
+.payment-options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.pay-option{border:2px solid var(--border);border-radius:8px;padding:14px;cursor:pointer;transition:all .15s;position:relative}
+.pay-option:hover{border-color:var(--navy-light)}
+.pay-option.selected{border-color:var(--navy);background:#EEF3FA}
+.pay-option-badge{position:absolute;top:-8px;left:12px;background:var(--gold);color:var(--navy-dark);font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px}
+.pay-option h4{font-size:12.5px;font-weight:600;color:var(--navy);margin-bottom:4px}
+.pay-option .pay-amount{font-size:20px;font-weight:700;color:var(--navy-dark);margin-bottom:4px}
+.pay-option .pay-desc{font-size:10.5px;color:var(--text-muted)}
+.pay-option .pay-input-row{display:flex;align-items:center;gap:6px;margin-top:8px;flex-wrap:wrap}
+.pay-option .pay-input-row input,.pay-option .pay-input-row select{border:1.5px solid var(--border);border-radius:var(--radius);padding:5px 8px;font-size:12px;color:var(--text);background:white;font-family:inherit;width:auto}
+.pay-option .pay-input-row input:focus,.pay-option .pay-input-row select:focus{outline:none;border-color:var(--navy)}
+
+/* ---- SIGNATURE AREAS ---- */
+.sig-block{border-top:1px solid var(--border);padding-top:14px;margin-top:14px}
+.sig-block-title{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.sig-disclaimer{font-size:11px;color:var(--text-muted);line-height:1.65;background:#F7F9FC;border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:12px}
+.sig-lines{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.sig-field{display:flex;flex-direction:column;gap:5px}
+.sig-input{border:none;border-bottom:1.5px solid var(--border-dark);padding:6px 0;font-size:12.5px;background:transparent;color:var(--text);font-family:inherit;width:100%}
+.sig-input:focus{outline:none;border-bottom-color:var(--navy)}
+.sig-label{font-size:10px;color:var(--text-light);letter-spacing:.03em}
+.sig-input.auto-filled{border-bottom-color:var(--navy-light)}
+
+/* ---- CARE INFO (ROF) ---- */
+.phase-block{margin-bottom:20px}
+.phase-header{background:var(--navy);color:white;border-radius:6px 6px 0 0;padding:10px 14px;font-size:13px;font-weight:600;letter-spacing:.04em}
+.phase-body{border:1px solid var(--border);border-top:none;border-radius:0 0 6px 6px;padding:14px;font-size:12px;line-height:1.75;color:var(--text-muted)}
+.phase-body ul{padding-left:18px;margin-top:8px}
+.phase-body ul li{margin-bottom:4px}
+
+/* ---- ACH FORM ---- */
+.payment-method-tabs{display:flex;gap:0;border:1.5px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:14px}
+.pm-tab{flex:1;padding:9px;text-align:center;font-size:12px;font-weight:500;cursor:pointer;background:white;color:var(--text-muted);border:none;border-right:1px solid var(--border);transition:all .15s;font-family:inherit}
+.pm-tab:last-child{border-right:none}
+.pm-tab.active{background:var(--navy);color:white}
+.pm-section{display:none}
+.pm-section.active{display:block}
+
+/* ---- ACTIONS ---- */
+.action-bar{display:flex;gap:10px;margin-top:20px;position:sticky;bottom:0;background:var(--bg);padding:12px 0;border-top:1px solid var(--border)}
+.btn{padding:10px 20px;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s}
+.btn-primary{background:var(--navy);color:white;flex:1}
+.btn-primary:hover{background:var(--navy-dark)}
+.btn-secondary{background:white;color:var(--navy);border:1.5px solid var(--border-dark)}
+.btn-secondary:hover{border-color:var(--navy);background:#F0F4FA}
+.btn-gold{background:var(--gold);color:var(--navy-dark)}
+.btn-gold:hover{background:#B8943E}
+
+/* ---- MISC ---- */
+.section-divider{font-size:10px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.07em;margin:16px 0 10px;display:flex;align-items:center;gap:8px}
+.section-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.freq-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.freq-num{width:60px;text-align:center}
+.visits-badge{font-size:12px;font-weight:600;color:var(--navy);background:#EEF3FA;border:1px solid var(--border);padding:4px 10px;border-radius:20px}
+.ins-notes-box{background:#FFFBEE;border:1px solid #E8D88A;border-radius:6px;padding:10px;font-size:11.5px;color:#6B5A10;line-height:1.6;margin-bottom:10px}
+.autofill-notice{font-size:10px;color:var(--navy);background:#EEF3FA;padding:4px 10px;border-radius:4px;margin-bottom:10px;display:inline-block}
+@media(max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr}.tx-grid{grid-template-columns:1fr}.payment-options{grid-template-columns:1fr}.sum-grid{grid-template-columns:1fr}.sig-lines{grid-template-columns:1fr}}
+@media print{.page-header,.action-bar,.tab-bar{display:none!important}.page{display:block!important;padding:12px}}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="header-top">
+    <img id="clinic-logo" class="logo-img" alt="Integrity Chiropractic" src="">
+    <div class="clinic-title">
+      <h1>Integrity Chiropractic of Mt. Sterling</h1>
+      <p>113 Maloney Way · Provider ID 1013908722 · Tax ID 47-3881001 · (859) 762-0009</p>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="showPage('page-ins')">① Insurance Verification</button>
+    <button class="tab-btn" onclick="showPage('page-plan')">② Care Plan &amp; Estimate</button>
+    <button class="tab-btn" onclick="showPage('page-rof')">③ Report of Findings</button>
+    <button class="tab-btn" onclick="showPage('page-gfe')">④ Good Faith Estimate</button>
+    <button class="tab-btn" onclick="showPage('page-ach')">⑤ Payment Authorization</button>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;padding:6px 16px 8px;background:#F0F4FA;border-top:1px solid var(--border);">
+    <span id="save-status" style="font-size:11px;color:var(--text-muted);flex:1;">No patient loaded</span>
+    <button onclick="savePatient()" style="font-size:11px;padding:5px 12px;background:var(--navy);color:white;border:none;border-radius:5px;cursor:pointer;font-weight:600;">💾 Save Patient</button>
+    <button onclick="showPatientList()" style="font-size:11px;padding:5px 12px;background:white;color:var(--navy);border:1.5px solid var(--navy);border-radius:5px;cursor:pointer;font-weight:600;">📂 Load Patient</button>
+    <button onclick="newPatient()" style="font-size:11px;padding:5px 12px;background:#c0392b;color:white;border:none;border-radius:5px;cursor:pointer;font-weight:600;">✕ New Patient</button>
+  </div>
+</div>
+
+<!-- Patient List Modal -->
+<div id="patient-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:10px;width:420px;max-width:95vw;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,.25);">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+      <h3 style="margin:0;font-size:15px;color:var(--navy);">📂 Saved Patients</h3>
+      <button onclick="closePatientModal()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--text-muted);">✕</button>
+    </div>
+    <div id="patient-list-body" style="flex:1;overflow-y:auto;padding:12px 20px;"></div>
+    <div style="padding:12px 20px;border-top:1px solid var(--border);text-align:right;">
+      <button onclick="closePatientModal()" style="font-size:12px;padding:6px 14px;background:var(--surface-2);color:var(--navy);border:1.5px solid var(--border);border-radius:5px;cursor:pointer;">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PAGE 1: INSURANCE ========== -->
+<div class="page active" id="page-ins">
+  <span class="autofill-notice">💡 Fields filled here auto-populate all other forms</span>
+
+  <div class="card">
+    <div class="card-header"><span class="icon">👤</span><h3>Patient Info</h3></div>
+    <div class="card-body">
+      <div class="field-grid g3">
+        <div class="field">
+          <label>Patient Name<span class="req">*</span></label>
+          <input type="text" id="pt-name" placeholder="Last, First" oninput="syncField('pt-name')">
+        </div>
+        <div class="field">
+          <label>Date of Birth</label>
+          <input type="date" id="pt-dob">
+        </div>
+        <div class="field">
+          <label>Coverage Effective Date</label>
+          <input type="date" id="pt-eff">
+        </div>
+        <div class="field">
+          <label>Address</label>
+          <input type="text" id="pt-address" placeholder="Street address" oninput="syncField('pt-address')">
+        </div>
+        <div class="field">
+          <label>Phone</label>
+          <input type="text" id="pt-phone" placeholder="(859) 000-0000" oninput="syncField('pt-phone')">
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="pt-email" placeholder="patient@email.com" oninput="syncField('pt-email')">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon">🪪</span><h3>Insurance Verification</h3></div>
+    <div class="card-body">
+
+      <!-- PATIENT TYPE TOGGLE -->
+      <div style="display:flex;align-items:center;gap:0;border:1.5px solid var(--border-dark);border-radius:8px;overflow:hidden;margin-bottom:14px">
+        <button id="toggle-cash" onclick="setPatientType('cash')" style="flex:1;padding:9px 12px;font-size:12px;font-weight:600;background:#2C3E5A;color:white;border:none;cursor:pointer;font-family:inherit;transition:all .15s">💵 Cash / Self-Pay</button>
+        <button id="toggle-ins" onclick="setPatientType('insurance')" style="flex:1;padding:9px 12px;font-size:12px;font-weight:600;background:var(--surface-2);color:var(--text-muted);border:none;cursor:pointer;font-family:inherit;border-left:1.5px solid var(--border-dark);transition:all .15s">🏥 Insurance</button>
+      </div>
+
+      <!-- CARRIER SELECTOR (insurance mode only) -->
+      <div id="carrier-row" style="display:none;margin-bottom:14px">
+        <div class="field">
+          <label>Insurance Carrier</label>
+          <select id="carrier-select" onchange="onCarrierChange()" style="font-size:13px;font-weight:500">
+            <option value="">— Select carrier —</option>
+            <option value="anthem">Anthem BCBS</option>
+            <option value="aetna">Aetna</option>
+            <option value="medicare">Medicare (KY)</option>
+            <option value="uhc">UHC / United Healthcare</option>
+            <option value="other">Other / Out-of-Network</option>
+          </select>
+        </div>
+        <div id="carrier-note" style="display:none;margin-top:8px;padding:10px 14px;border-radius:6px;font-size:11.5px;line-height:1.6"></div>
+      </div>
+
+      <div class="field-grid g2">
+        <div class="field">
+          <label>Primary Insurance<span class="req">*</span></label>
+          <input type="text" id="ins-primary" placeholder="e.g. Anthem" oninput="syncField('ins-primary')">
+        </div>
+        <div class="field">
+          <label>Member ID</label>
+          <input type="text" id="ins-member-id" placeholder="e.g. XVH050M71988">
+        </div>
+        <div class="field">
+          <label>Secondary Insurance</label>
+          <input type="text" id="ins-secondary" placeholder="Optional">
+        </div>
+        <div class="field">
+          <label>Secondary Member ID</label>
+          <input type="text" id="ins-member-id2" placeholder="Optional">
+        </div>
+      </div>
+
+      <div class="field-grid g3">
+        <div class="field">
+          <label>Therapy Codes Covered? (97110, 97012, 97140)</label>
+          <div class="radio-row">
+            <label class="radio-opt"><input type="radio" name="therapy-covered" value="yes"> Yes</label>
+            <label class="radio-opt"><input type="radio" name="therapy-covered" value="no"> No</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>PT Visits / Year</label>
+          <input type="number" id="pt-visits-yr" placeholder="e.g. 90" min="0">
+        </div>
+        <div class="field">
+          <label>Chiro Visit Limit</label>
+          <input type="number" id="chiro-visit-limit" placeholder="e.g. 26" min="0">
+        </div>
+      </div>
+
+      <div class="field-grid g4">
+        <div class="field">
+          <label>Co-pay ($)</label>
+          <input type="number" id="copay-dollar" placeholder="e.g. 30" min="0">
+        </div>
+        <div class="field">
+          <label>Co-insurance (%)</label>
+          <input type="number" id="copay-pct" placeholder="e.g. 20" min="0" max="100">
+        </div>
+        <div class="field">
+          <label>Deductible ($)</label>
+          <input type="number" id="deductible" placeholder="e.g. 650" min="0" oninput="autoCalcDed()">
+        </div>
+        <div class="field">
+          <label>Deductible Met ($)</label>
+          <input type="number" id="ded-met" placeholder="e.g. 690" min="0" oninput="autoCalcDed()">
+        </div>
+      </div>
+
+      <div class="field-grid g3">
+        <div class="field">
+          <label>Deductible Remaining ($)</label>
+          <input type="number" id="ded-left" placeholder="Auto-calc or enter" min="0">
+        </div>
+        <div class="field">
+          <label>Deductible Begins</label>
+          <input type="date" id="ded-start">
+        </div>
+        <div class="field">
+          <label>DME Covered (L0627/E0855)?</label>
+          <div class="radio-row">
+            <label class="radio-opt"><input type="radio" name="dme-covered" value="yes"> Yes</label>
+            <label class="radio-opt"><input type="radio" name="dme-covered" value="no"> No</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-grid g2">
+        <div class="field">
+          <label>Pre-Authorization Required?</label>
+          <div class="radio-row">
+            <label class="radio-opt"><input type="radio" name="preauth" value="yes"> Yes</label>
+            <label class="radio-opt"><input type="radio" name="preauth" value="no"> No</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>X-Ray Co-Insurance (%)</label>
+          <input type="number" id="xray-coins" placeholder="e.g. 20" min="0" max="100">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Verification Notes</label>
+        <textarea id="ins-notes" placeholder="e.g. Anthem Allowables until deductible is met. Chiro – 20% co-ins, 26 visits. PT – 20% co-ins, 90 visits. X-ray – 20%."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-bar">
+    <button class="btn btn-primary" onclick="showPage('page-plan')">Next: Build Care Plan →</button>
+  </div>
+</div>
+
+<!-- ========== PAGE 2: CARE PLAN ========== -->
+<div class="page" id="page-plan">
+  <div class="card">
+    <div class="card-header"><span class="icon">📋</span><h3>Visit Frequency</h3></div>
+    <div class="card-body">
+      <div class="freq-row">
+        <input type="number" class="freq-num field input" id="freq-per-week" value="2" min="1" max="7" oninput="updateVisits()">
+        <span style="color:var(--text-muted)">times / week for</span>
+        <input type="number" class="freq-num field input" id="freq-weeks" value="12" min="1" max="52" oninput="updateVisits()">
+        <span style="color:var(--text-muted)">weeks</span>
+        <span class="visits-badge" id="visits-badge">= 24 visits</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 PHASE PROTOCOL -->
+  <div style="margin-bottom:16px;border:2px solid #C9A84C;border-radius:10px;overflow:hidden;">
+    <div style="background:#C9A84C;padding:9px 16px;display:flex;align-items:center;gap:10px;">
+      <div id="proto-check" onclick="toggleProtocol()" style="width:18px;height:18px;border:2px solid rgba(30,46,66,.4);border-radius:3px;background:white;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s">
+        <svg id="proto-icon" viewBox="0 0 10 8" style="display:none;width:10px;height:10px;fill:none;stroke:#1E2E42;stroke-width:2.5"><polyline points="1,4 4,7 9,1"/></svg>
+      </div>
+      <span style="font-size:12px;font-weight:700;color:#1E2E42;text-transform:uppercase;letter-spacing:.08em;cursor:pointer" onclick="toggleProtocol()">3-Phase Healing Protocol</span>
+      <span style="font-size:10px;color:rgba(30,46,66,.65);margin-left:auto">Auto-adds bundled services to estimate</span>
+    </div>
+    <div id="proto-body" style="display:none;padding:12px 16px;background:#FFFDF0;">
+      <div style="font-size:11px;color:#6B5200;margin-bottom:10px;line-height:1.6;">
+        When checked, the following services are automatically included in the cost estimate based on the visit plan above.
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+
+        <!-- EMS / Interferential -->
+        <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid #E8D88A;border-radius:6px;background:white;">
+          <div style="width:8px;height:8px;border-radius:50%;background:#C9A84C;flex-shrink:0"></div>
+          <div style="flex:1">
+            <div style="font-size:12px;font-weight:500;color:#1A2535">EMS / Interferential</div>
+            <div style="font-size:10px;color:#8A9AB0">97032 · chief complaint · every visit</div>
+          </div>
+          <div style="font-size:11px;font-weight:600;color:#2C3E5A">$65/visit</div>
+        </div>
+
+        <!-- Heat -->
+        <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid #E8D88A;border-radius:6px;background:white;">
+          <div style="width:8px;height:8px;border-radius:50%;background:#C9A84C;flex-shrink:0"></div>
+          <div style="flex:1">
+            <div style="font-size:12px;font-weight:500;color:#1A2535">Heat Therapy</div>
+            <div style="font-size:10px;color:#8A9AB0">97010 · every visit · <strong style="color:#c0392b">patient-pay only</strong></div>
+          </div>
+          <div style="font-size:11px;font-weight:600;color:#2C3E5A">$10/visit</div>
+        </div>
+
+        <!-- Exercise x2 -->
+        <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid #E8D88A;border-radius:6px;background:white;">
+          <div style="width:8px;height:8px;border-radius:50%;background:#C9A84C;flex-shrink:0"></div>
+          <div style="flex:1">
+            <div style="font-size:12px;font-weight:500;color:#1A2535">Therapeutic Exercise × 2 units</div>
+            <div style="font-size:10px;color:#8A9AB0">97110 · 2 units per visit</div>
+          </div>
+          <div style="font-size:11px;font-weight:600;color:#2C3E5A" id="proto-ex-price">$130/visit</div>
+        </div>
+
+        <!-- ART every other visit -->
+        <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid #E8D88A;border-radius:6px;background:white;">
+          <div style="width:8px;height:8px;border-radius:50%;background:#C9A84C;flex-shrink:0"></div>
+          <div style="flex:1">
+            <div style="font-size:12px;font-weight:500;color:#1A2535">Active Release Technique<sup style="font-size:8px">®</sup></div>
+            <div style="font-size:10px;color:#8A9AB0">97140 · every other visit (~50%)</div>
+          </div>
+          <div style="font-size:11px;font-weight:600;color:#2C3E5A" id="proto-art-price">$65 × <span id="proto-art-qty">—</span></div>
+        </div>
+
+      </div>
+      <!-- Protocol subtotal preview -->
+      <div style="margin-top:10px;padding:8px 12px;background:#2C3E5A;border-radius:6px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-size:10px;color:rgba(255,255,255,.65);margin-bottom:1px">Protocol adds to estimate</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.5)">Heat ($10/visit) is patient-pay only — never billed to insurance</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:10px;color:rgba(255,255,255,.65)">Total protocol charges</div>
+          <div style="font-size:16px;font-weight:700;color:white" id="proto-subtotal">$—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon">🔁</span><h3>Per-Visit Services</h3></div>
+    <div class="card-body">
+      <div class="tx-grid">
+        <div class="tx-row" id="tx-98940" data-price="65" data-type="pervisit" onclick="toggleTx(this)">
+          <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div class="tx-info"><div class="tx-name">CMT – Spinal</div><div class="tx-code">98940</div></div>
+          <div class="tx-right"><span class="tx-price">$65/visit</span></div>
+        </div>
+        <div class="tx-row" id="tx-98943" data-price="65" data-type="pervisit" onclick="toggleTx(this)">
+          <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div class="tx-info"><div class="tx-name">CMT – Non-Spinal</div><div class="tx-code">98943</div></div>
+          <div class="tx-right"><span class="tx-price">$65/visit</span></div>
+        </div>
+        <div class="tx-row" id="tx-97110" data-price="65" data-type="pervisit" onclick="toggleTx(this)">
+          <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div class="tx-info"><div class="tx-name">Therapeutic Exercise</div><div class="tx-code">97110</div></div>
+          <div class="tx-right"><span class="tx-price">$65/visit</span></div>
+        </div>
+        <div class="tx-row" id="tx-97112" data-price="65" data-type="pervisit" onclick="toggleTx(this)">
+          <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div class="tx-info"><div class="tx-name">Neuromuscular Re-ed.</div><div class="tx-code">97112</div></div>
+          <div class="tx-right"><span class="tx-price">$65/visit</span></div>
+        </div>
+        <div class="tx-row" id="tx-97530" data-price="65" data-type="pervisit" onclick="toggleTx(this)">
+          <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div class="tx-info"><div class="tx-name">Therapeutic Activities</div><div class="tx-code">97530</div></div>
+          <div class="tx-right"><span class="tx-price">$65/visit</span></div>
+        </div>
+        <div class="tx-row" id="tx-art" data-price="65" data-type="pervisit" onclick="toggleTx(this)">
+          <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div class="tx-info"><div class="tx-name">Active Release Technique<span class="tx-tm">®</span></div><div class="tx-code">97140</div></div>
+          <div class="tx-right"><span class="tx-price">$65/visit</span></div>
+        </div>
+        <div class="tx-row" id="tx-97012" data-price="45" data-type="pervisit" onclick="toggleTx(this)">
+          <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div class="tx-info"><div class="tx-name">Cervical Extension Traction</div><div class="tx-code">97012</div></div>
+          <div class="tx-right"><span class="tx-price">$45/visit</span></div>
+        </div>
+        <!-- Shockwave default 12 -->
+        <div class="tx-row" id="tx-shockwave" data-price="50" data-type="qty" data-qty="12" onclick="toggleTx(this)">
+          <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div class="tx-info"><div class="tx-name">Shockwave Therapy</div><div class="tx-code">per treatment</div></div>
+          <div class="tx-right">
+            <span class="tx-price">$50 ea</span>
+            <div class="qty-wrap" onclick="event.stopPropagation()">
+              <button class="qty-btn" onclick="adjQty('tx-shockwave',-1)">−</button>
+              <span class="qty-val" id="qty-tx-shockwave">12</span>
+              <button class="qty-btn" onclick="adjQty('tx-shockwave',1)">+</button>
+            </div>
+          </div>
+        </div>
+        <!-- Dry Needling default 12 -->
+        <div class="tx-row" id="tx-dryneedle" data-price="50" data-type="qty" data-qty="12" onclick="toggleTx(this)">
+          <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div class="tx-info"><div class="tx-name">Dry Needling</div><div class="tx-code">per treatment</div></div>
+          <div class="tx-right">
+            <span class="tx-price">$50 ea</span>
+            <div class="qty-wrap" onclick="event.stopPropagation()">
+              <button class="qty-btn" onclick="adjQty('tx-dryneedle',-1)">−</button>
+              <span class="qty-val" id="qty-tx-dryneedle">12</span>
+              <button class="qty-btn" onclick="adjQty('tx-dryneedle',1)">+</button>
+            </div>
+          </div>
+        </div>
+        <!-- Bigfoot -->
+        <div class="tx-row" id="tx-bigfoot" data-price="75" data-type="qty" data-qty="1" onclick="toggleTx(this)">
+          <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div class="tx-info"><div class="tx-name">Bigfoot Heat Map<span class="tx-tm">™</span></div><div class="tx-code">per assessment</div></div>
+          <div class="tx-right">
+            <span class="tx-price">$75 ea</span>
+            <div class="qty-wrap" onclick="event.stopPropagation()">
+              <button class="qty-btn" onclick="adjQty('tx-bigfoot',-1)">−</button>
+              <span class="qty-val" id="qty-tx-bigfoot">1</span>
+              <button class="qty-btn" onclick="adjQty('tx-bigfoot',1)">+</button>
+            </div>
+          </div>
+        </div>
+        <!-- ROM -->
+        <div class="tx-row" id="tx-rom" data-price="85" data-type="qty" data-qty="1" onclick="toggleTx(this)">
+          <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div class="tx-info"><div class="tx-name">ROM Assessment</div><div class="tx-code">per assessment</div></div>
+          <div class="tx-right">
+            <span class="tx-price">$85 ea</span>
+            <div class="qty-wrap" onclick="event.stopPropagation()">
+              <button class="qty-btn" onclick="adjQty('tx-rom',-1)">−</button>
+              <span class="qty-val" id="qty-tx-rom">1</span>
+              <button class="qty-btn" onclick="adjQty('tx-rom',1)">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon">1️⃣</span><h3>One-Time &amp; Additional Services</h3></div>
+    <div class="card-body">
+      <div class="tx-grid">
+        <div class="tx-row" id="tx-xray" data-price="100" data-type="once" onclick="toggleTx(this)">
+          <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div class="tx-info"><div class="tx-name">Diagnostic Radiology</div><div class="tx-code">72040-114 · initial</div></div>
+          <div class="tx-right"><span class="tx-price">$100</span></div>
+        </div>
+        <div class="tx-row" id="tx-xray-repeat" data-price="50" data-type="qty" data-qty="1" onclick="toggleTx(this)">
+          <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div class="tx-info"><div class="tx-name">Repeat Diagnostic Radiology</div><div class="tx-code">72040 · follow-up</div></div>
+          <div class="tx-right">
+            <span class="tx-price">$50 ea</span>
+            <div class="qty-wrap" onclick="event.stopPropagation()">
+              <button class="qty-btn" onclick="adjQty('tx-xray-repeat',-1)">−</button>
+              <span class="qty-val" id="qty-tx-xray-repeat">1</span>
+              <button class="qty-btn" onclick="adjQty('tx-xray-repeat',1)">+</button>
+            </div>
+          </div>
+        </div>
+        <div class="tx-row" id="tx-eval" data-price="150" data-type="once" onclick="toggleTx(this)">
+          <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div class="tx-info"><div class="tx-name">Initial Evaluation / E&amp;M</div><div class="tx-code">99201-5 · one-time</div></div>
+          <div class="tx-right"><span class="tx-price">$150</span></div>
+        </div>
+        <div class="tx-row" id="tx-em-add" data-price="65" data-type="qty" data-qty="1" onclick="toggleTx(this)">
+          <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div class="tx-info"><div class="tx-name">Additional E&amp;M Visit</div><div class="tx-code">99213</div></div>
+          <div class="tx-right">
+            <span class="tx-price">$65 ea</span>
+            <div class="qty-wrap" onclick="event.stopPropagation()">
+              <button class="qty-btn" onclick="adjQty('tx-em-add',-1)">−</button>
+              <span class="qty-val" id="qty-tx-em-add">1</span>
+              <button class="qty-btn" onclick="adjQty('tx-em-add',1)">+</button>
+            </div>
+          </div>
+        </div>
+        <div class="tx-row" id="tx-ppt" data-price="225" data-type="once" onclick="toggleTx(this)">
+          <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div class="tx-info"><div class="tx-name">Physical Performance Test</div><div class="tx-code">97750</div></div>
+          <div class="tx-right"><span class="tx-price">$225</span></div>
+        </div>
+        <div class="tx-row" id="tx-ortho" data-price="580" data-type="once" onclick="toggleTx(this)">
+          <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div class="tx-info"><div class="tx-name">Orthotic Pelvic Stabilizer</div><div class="tx-code">L3020</div></div>
+          <div class="tx-right"><span class="tx-price">$580</span></div>
+        </div>
+        <div class="tx-row" id="tx-enzymes" data-price="31.20" data-type="qty" data-qty="1" onclick="toggleTx(this)">
+          <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div class="tx-info"><div class="tx-name">Ligament Enzymes</div><div class="tx-code">$31.20 / bottle</div></div>
+          <div class="tx-right">
+            <span class="tx-price">$31.20 ea</span>
+            <div class="qty-wrap" onclick="event.stopPropagation()">
+              <button class="qty-btn" onclick="adjQty('tx-enzymes',-1)">−</button>
+              <span class="qty-val" id="qty-tx-enzymes">1</span>
+              <button class="qty-btn" onclick="adjQty('tx-enzymes',1)">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gym Membership -->
+      <div style="margin-top:12px;border:1.5px solid var(--border-accent);border-radius:8px;overflow:hidden;">
+        <div style="background:var(--bg-accent);padding:6px 12px;font-size:10px;font-weight:700;color:var(--text-accent);text-transform:uppercase;letter-spacing:.07em;">Gym Membership Add-On</div>
+        <div style="padding:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <div id="gym-check" style="width:18px;height:18px;cursor:pointer;border:1.5px solid var(--border-strong);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s" onclick="toggleGym()">
+            <svg id="gym-check-icon" viewBox="0 0 10 8" style="display:none;width:10px;height:10px;fill:none;stroke:white;stroke-width:2"><polyline points="1,4 4,7 9,1"/></svg>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:500;color:var(--text-primary)">Integrity Gym Membership</div>
+            <div style="font-size:10px;color:var(--text-muted)">Monthly access included in care plan</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:13px;font-weight:600;color:var(--text-accent)">$39 / month</div>
+            <div style="font-size:10px;color:var(--text-muted)" id="gym-months-label"></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 12px;border:1.5px solid var(--border-accent);border-radius:6px;cursor:pointer;transition:all .15s;" id="gym-comp-wrap" onclick="toggleGymComp(event)">
+            <div id="gym-comp-check" style="width:15px;height:15px;border:1.5px solid var(--border-strong);border-radius:3px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0">
+              <svg id="gym-comp-icon" viewBox="0 0 10 8" style="display:none;width:9px;height:9px;fill:none;stroke:white;stroke-width:2"><polyline points="1,4 4,7 9,1"/></svg>
+            </div>
+            <span style="font-size:11px;font-weight:600;color:var(--text-accent)">Complimentary</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Home Exercise Kit -->
+      <div style="margin-top:12px;border:1.5px solid var(--border-accent);border-radius:8px;overflow:hidden;">
+        <div style="background:var(--bg-accent);padding:6px 12px;font-size:10px;font-weight:700;color:var(--text-accent);text-transform:uppercase;letter-spacing:.07em;">Home Exercise Kit with Coaching / Workshop</div>
+        <div style="padding:12px 12px 6px;">
+          <!-- main toggle row -->
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px;">
+            <div id="kit-check" style="width:18px;height:18px;cursor:pointer;background:var(--fill-accent);border:1.5px solid var(--fill-accent);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s" onclick="toggleKit()">
+              <svg id="kit-check-icon" viewBox="0 0 10 8" style="width:10px;height:10px;fill:none;stroke:white;stroke-width:2"><polyline points="1,4 4,7 9,1"/></svg>
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:13px;font-weight:500;color:var(--text-primary)">Home Exercise Kit + Coaching</div>
+              <div style="font-size:10px;color:var(--text-muted);margin-top:1px;font-style:italic">&ldquo;Ask Dr. Faulkner anything about strength training and working out&rdquo;</div>
+            </div>
+            <div style="text-align:right;flex-shrink:0;">
+              <div style="font-size:13px;font-weight:600;color:var(--text-accent)">$349.00</div>
+              <div style="font-size:10px;color:var(--text-muted)">total value</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 12px;border:1.5px solid var(--border-accent);border-radius:6px;cursor:pointer;transition:all .15s;" id="kit-comp-wrap" onclick="toggleKitComp(event)">
+              <div id="kit-comp-check" style="width:15px;height:15px;background:var(--fill-success);border:1.5px solid var(--fill-success);border-radius:3px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0">
+                <svg id="kit-comp-icon" viewBox="0 0 10 8" style="width:9px;height:9px;fill:none;stroke:white;stroke-width:2"><polyline points="1,4 4,7 9,1"/></svg>
+              </div>
+              <span style="font-size:11px;font-weight:600;color:var(--text-accent)">Complimentary</span>
+            </div>
+          </div>
+          <!-- sub-items -->
+          <div id="kit-subitems" style="padding:8px 10px;background:var(--surface-1);border-radius:6px;display:flex;flex-direction:column;gap:6px;margin-bottom:10px;">
+            <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px;">Includes</div>
+            <label style="display:flex;align-items:center;gap:9px;cursor:pointer;font-size:12px;color:var(--text-primary)">
+              <input type="checkbox" id="kit-bands-upper" checked style="accent-color:var(--fill-accent);width:14px;height:14px">
+              <span>Resistance Bands — Upper</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:9px;cursor:pointer;font-size:12px;color:var(--text-primary)">
+              <input type="checkbox" id="kit-bands-lower" checked style="accent-color:var(--fill-accent);width:14px;height:14px">
+              <span>Resistance Bands — Lower</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:9px;cursor:pointer;font-size:12px;color:var(--text-primary)">
+              <input type="checkbox" id="kit-liftiq" checked style="accent-color:var(--fill-accent);width:14px;height:14px">
+              <span>Lift IQ App</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="summary-hero" id="summary-wrap" style="display:none">
+    <h2>Patient Cost Estimate</h2>
+    <div id="sum-mode-badge" style="display:none;margin-bottom:10px;background:rgba(201,168,76,.2);border:1px solid rgba(201,168,76,.5);border-radius:6px;padding:5px 10px;font-size:10px;font-weight:600;color:#C9A84C;text-transform:uppercase;letter-spacing:.06em"></div>
+    <div class="sum-grid">
+      <div class="sum-box"><div class="sum-box-label">Total Visits</div><div class="sum-box-val" id="sum-visits">—</div></div>
+      <div class="sum-box"><div class="sum-box-label">Total Billed</div><div class="sum-box-val" id="sum-total">—</div></div>
+      <div class="sum-box"><div class="sum-box-label" id="sum-ins-label">Est. Insurance Pays</div><div class="sum-box-val" id="sum-ins">—</div></div>
+      <div class="sum-box"><div class="sum-box-label">Patient Pays at Visit</div><div class="sum-box-val" id="sum-pt">—</div></div>
+    </div>
+    <hr class="sum-divider">
+    <div id="breakdown-rows"></div>
+    <div id="sum-note" class="sum-note" style="display:none"></div>
+    <!-- Non-assignment reimbursement disclaimer -->
+    <div id="nonpar-disclaimer" style="display:none;margin-top:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:12px 14px;">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;opacity:.8;margin-bottom:6px">📋 Insurance Reimbursement Notice</div>
+      <div style="font-size:11.5px;line-height:1.7;opacity:.92" id="nonpar-text"></div>
+      <div style="margin-top:10px;border-top:1px solid rgba(255,255,255,.2);padding-top:8px;display:flex;justify-content:space-between;align-items:baseline">
+        <span style="font-size:11px;opacity:.8">Expected reimbursement to patient</span>
+        <span style="font-size:16px;font-weight:700" id="nonpar-reimb-amount">$—</span>
+      </div>
+      <div style="font-size:10px;opacity:.6;margin-top:4px;font-style:italic" id="nonpar-reimb-note"></div>
+      <div style="font-size:10px;opacity:.5;margin-top:4px">**Not a guarantee of payment</div>
+    </div>
+  </div>
+
+  <div class="action-bar">
+    <button class="btn btn-secondary" onclick="showPage('page-ins')">← Back</button>
+    <button class="btn btn-primary" onclick="calcAndNext()">Calculate &amp; Continue →</button>
+  </div>
+</div>
+
+<!-- ========== PAGE 3: REPORT OF FINDINGS ========== -->
+<div class="page" id="page-rof">
+  <div class="card">
+    <div class="card-header"><span class="icon">📄</span><h3>Report of Findings — Patient Education</h3></div>
+    <div class="card-body">
+      <div class="card-note">This form explains the three phases of healing to the patient. Review each phase with them before presenting the care plan and financial options.</div>
+
+      <div class="phase-block">
+        <div class="phase-header">PHASE 1 — INFLAMMATORY PHASE (0–72 hours)</div>
+        <div class="phase-body">
+          This phase begins from the moment of injury up to 72 hours after impact. During this phase the injured person may not feel pain, however tissues within the bony structures and nerves will begin a process of ramping up inflammation to begin producing scar tissue. Think of the injury like someone has punched a hole through drywall — the scar tissue is the putty and tape used to repair it.
+          <ul>
+            <li>Chiropractic Adjustments</li>
+            <li>Passive and Active Range of Motion</li>
+            <li>Electric Muscle Stimulation</li>
+            <li>Traction Therapy</li>
+            <li>Home Exercise Bands and/or Medical Equipment</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase-block">
+        <div class="phase-header">PHASE 2 — REPAIR PHASE (up to 6 weeks)</div>
+        <div class="phase-body">
+          The body makes all scar tissue repairs needed up to 6 weeks after the injury. This is the time the body should be getting chiropractic and physical medicine care to make sure alignment of muscles, bones, and ligaments are properly restored. Think of this phase as concrete that is still setting — there is time to mold the areas and heal the structures. <strong>Important:</strong> scar tissue manufactured to heal is only approximately 70% as strong as original tissue. Scar tissue is laid down in a haphazard way, creating trigger points and knots that bring extra pain fibers. Bio-electricity disruption can cause pain to refer to other sites.
+        </div>
+      </div>
+
+      <div class="phase-block">
+        <div class="phase-header">PHASE 3 — REMODELING / CORRECTIVE PHASE</div>
+        <div class="phase-body">
+          The remodeling phase focuses on restoring proper movement patterns, strengthening stabilizing muscles, and correcting structural alignment. Continued chiropractic care during this phase helps ensure that scar tissue remodels in an organized, functional pattern. Home exercise compliance is critical to long-term outcomes.
+        </div>
+      </div>
+
+      <div class="card-note">
+        <strong>Good Faith Estimate Plan includes:</strong> Chiropractic Adjustments · Three-phase healing therapies · Rehabilitative Spinal Exercises · Re-evaluations · Any and all X-rays and exams during the plan of care.
+      </div>
+
+      <div class="sig-block">
+        <div class="sig-block-title">Patient Acknowledgment</div>
+        <div class="sig-lines">
+          <div class="sig-field">
+            <input class="sig-input auto-filled" id="rof-pt-name" type="text" readonly>
+            <span class="sig-label">Patient name (auto-filled)</span>
+          </div>
+          <div class="sig-field">
+            <input class="sig-input" id="rof-pt-sig" type="text" placeholder="">
+            <span class="sig-label">Patient / guardian signature</span>
+          </div>
+          <div class="sig-field">
+            <input class="sig-input" id="rof-witness-sig" type="text" placeholder="">
+            <span class="sig-label">Witness signature</span>
+          </div>
+          <div class="sig-field">
+            <input class="sig-input" id="rof-date" type="date">
+            <span class="sig-label">Date</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-bar">
+    <button class="btn btn-secondary" onclick="showPage('page-plan')">← Back</button>
+    <button class="btn btn-primary" onclick="showPage('page-gfe')">Next: Good Faith Estimate →</button>
+  </div>
+</div>
+
+<!-- ========== PAGE 4: GOOD FAITH ESTIMATE ========== -->
+<div class="page" id="page-gfe">
+  <div class="card">
+    <div class="card-header"><span class="icon">📋</span><h3>Good Faith Estimate</h3></div>
+    <div class="card-body">
+      <div class="card-note" id="gfe-plan-summary">Complete the care plan on the previous page to populate this estimate.</div>
+
+      <div class="field-grid g2">
+        <div class="field">
+          <label>Patient Name</label>
+          <input class="auto-filled" id="gfe-pt-name" type="text" readonly>
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input class="auto-filled" id="gfe-pt-email" type="text" readonly>
+        </div>
+      </div>
+
+      <div class="section-divider">Total Plan</div>
+      <div class="field-grid g2">
+        <div class="field">
+          <label>Total Visits (or until balance paid)</label>
+          <input class="auto-filled" id="gfe-visits" type="text" readonly>
+        </div>
+        <div class="field">
+          <label>Total Charges</label>
+          <input class="auto-filled" id="gfe-total" type="text" readonly>
+        </div>
+      </div>
+
+      <div class="section-divider">Payment Options</div>
+      <div class="payment-options">
+        <div class="pay-option" id="pay-opt-1" onclick="selectPayOpt(1)">
+          <div class="pay-option-badge">SAVE 20%</div>
+          <h4>Option 1 — Pre-Pay Discount</h4>
+          <div class="pay-amount" id="gfe-prepay">$—</div>
+          <div class="pay-desc">Pay in full today and save 20% off your patient responsibility. You save: <span id="gfe-discount">$—</span></div>
+        </div>
+        <div class="pay-option" id="pay-opt-2" onclick="selectPayOpt(2)">
+          <h4>Option 2 — Payment Plan</h4>
+          <div class="pay-amount">$99 <span style="font-size:13px;font-weight:400">set-up fee</span></div>
+          <div class="pay-desc" id="gfe-plan-desc">Then bi-weekly payments — no finance charge, no interest.</div>
+          <div class="pay-input-row" onclick="event.stopPropagation()">
+            <span style="font-size:12px;color:var(--text-muted)">$</span>
+            <input type="number" id="gfe-biweekly" placeholder="amount" style="width:80px" oninput="updateGFE()">
+            <span style="font-size:12px;color:var(--text-muted)">bi-weekly for</span>
+            <select id="gfe-months" onchange="updateGFE()">
+              <option>1</option><option>2</option><option>3</option><option>4</option>
+              <option>5</option><option>6</option><option selected>9</option><option>12</option>
+            </select>
+            <span style="font-size:12px;color:var(--text-muted)">months</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>I choose option #</label>
+        <div class="radio-row">
+          <label class="radio-opt"><input type="radio" name="pay-choice" value="1" onchange="selectPayOpt(1)"> Option 1 (Pre-Pay)</label>
+          <label class="radio-opt"><input type="radio" name="pay-choice" value="2" onchange="selectPayOpt(2)"> Option 2 (Payment Plan)</label>
+        </div>
+      </div>
+
+      <!-- Combined savings callout — gym + home kit -->
+      <div id="savings-block" style="display:none;margin-top:4px;background:var(--bg-success);border:1.5px solid var(--border-success);border-radius:8px;padding:14px 16px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <span style="font-size:15px">&#x1F381;</span>
+          <span style="font-size:12px;font-weight:700;color:var(--text-success);text-transform:uppercase;letter-spacing:.06em">Included value with your plan</span>
+        </div>
+        <!-- gym row -->
+        <div id="savings-gym-row" style="display:none;flex-direction:row;justify-content:space-between;align-items:baseline;margin-bottom:5px;">
+          <span style="font-size:12px;color:var(--text-success)">&#x1F3CB; Integrity Gym Membership (<span id="gym-savings-months">—</span> months)</span>
+          <span style="font-size:13px;font-weight:700;color:var(--text-success)" id="gym-savings-value">$—</span>
+        </div>
+        <!-- kit row -->
+        <div id="savings-kit-row" style="display:none;flex-direction:row;justify-content:space-between;align-items:baseline;margin-bottom:5px;">
+          <span style="font-size:12px;color:var(--text-success)">&#x1F4AA; Home Exercise Kit + Coaching</span>
+          <span style="font-size:13px;font-weight:700;color:var(--text-success)" id="kit-savings-value">$349.00</span>
+        </div>
+        <div style="font-size:11px;color:var(--text-success);opacity:.85;margin-bottom:8px" id="savings-desc">Complimentary items included at no additional charge with your selected payment option.</div>
+        <div style="border-top:1px solid var(--border-success);margin-top:6px;padding-top:10px;display:flex;justify-content:space-between;align-items:baseline;">
+          <span style="font-size:12px;font-weight:600;color:var(--text-success)">Total value of your plan</span>
+          <span style="font-size:17px;font-weight:700;color:var(--text-success)" id="plan-total-value">$—</span>
+        </div>
+      </div>
+
+      <div class="sig-block">
+        <div class="sig-block-title">Patient Acknowledgment</div>
+        <div class="sig-disclaimer">
+          This is an estimated amount based on our verification of your insurance benefits. This is not a guarantee of benefit nor is it the total amount that will be billed to your insurance. Actual collections paid to provider will vary based on your insurance's definition of "Medical Necessity" and Plan benefits. I understand that should I choose to discontinue care, my refund, if any, will be determined based on usual and customary fees. If I receive a check in the mail from my insurance company for services rendered at Integrity Chiropractic, I will return that check to Integrity with my signature endorsed on the back.
+        </div>
+        <div class="sig-lines">
+          <div class="sig-field">
+            <input class="sig-input auto-filled" id="gfe-sig-name" type="text" readonly>
+            <span class="sig-label">Patient name (auto-filled)</span>
+          </div>
+          <div class="sig-field">
+            <input class="sig-input" id="gfe-sig-pt" type="text" placeholder="">
+            <span class="sig-label">Patient / guardian signature</span>
+          </div>
+          <div class="sig-field">
+            <input class="sig-input" id="gfe-sig-witness" type="text" placeholder="">
+            <span class="sig-label">Witness signature</span>
+          </div>
+          <div class="sig-field">
+            <input class="sig-input" id="gfe-sig-date" type="date">
+            <span class="sig-label">Date</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-bar">
+    <button class="btn btn-secondary" onclick="showPage('page-rof')">← Back</button>
+    <button class="btn btn-primary" onclick="showPage('page-ach')">Next: Payment Authorization →</button>
+  </div>
+</div>
+
+<!-- ========== PAGE 5: ACH / PAYMENT AUTH ========== -->
+<div class="page" id="page-ach">
+  <div class="card">
+    <div class="card-header"><span class="icon">🏦</span><h3>Authorization for Prearranged Debits</h3></div>
+    <div class="card-body">
+      <div class="card-note">
+        I/we the undersigned hereby authorize Integrity Chiropractic to initiate debit entries to the checking, savings, or credit card account provided. I acknowledge that ACH transactions must comply with US law. This authorization remains in full force until I give written notice at least 15 days before the next debit date, or by contacting us at <strong>(859) 762-0009</strong> at least 3–5 business days before my next payment date, or by email to <strong>billing@mtsterlingchiropractor.com</strong>. There are no refunds on services rendered unless a credit exists after insurance/deductible payments. A <strong>$59 service charge</strong> applies for any returned or unpaid debit. Cancellation of this authorization does not relieve responsibility to fulfill contractual obligations.
+      </div>
+
+      <div class="field-grid g2">
+        <div class="field">
+          <label>Name</label>
+          <input class="auto-filled" id="ach-name" type="text" readonly>
+        </div>
+        <div class="field">
+          <label>Date</label>
+          <input type="date" id="ach-date">
+        </div>
+        <div class="field g-full" style="grid-column:1/-1">
+          <label>Address</label>
+          <input class="auto-filled" id="ach-address" type="text" readonly>
+        </div>
+        <div class="field">
+          <label>Phone</label>
+          <input class="auto-filled" id="ach-phone" type="text" readonly>
+        </div>
+        <div class="field">
+          <label>Estimated Balance Owed</label>
+          <input class="auto-filled" id="ach-balance" type="text" readonly>
+        </div>
+        <div class="field">
+          <label>Number of Estimated Debits</label>
+          <input type="text" id="ach-num-debits" placeholder="e.g. 9">
+        </div>
+        <div class="field">
+          <label>Auto Debit Date</label>
+          <input type="date" id="ach-debit-date">
+        </div>
+      </div>
+
+      <div class="section-divider">Payment Schedule Calculator</div>
+      <div class="card-note">Enter a per-payment amount to reverse-engineer the schedule, or enter the total balance and number of payments to calculate the per-payment amount. Payments run <strong>twice per month</strong>.</div>
+      <div class="field-grid g3">
+        <div class="field">
+          <label>Per-Payment Amount ($)</label>
+          <input type="number" id="sched-per-payment" placeholder="e.g. 60" min="0" step="0.01" oninput="calcScheduleFromPayment()">
+        </div>
+        <div class="field">
+          <label>Number of Payments</label>
+          <input type="number" id="sched-num-payments" placeholder="e.g. 20" min="1" oninput="calcScheduleFromPayment()">
+        </div>
+        <div class="field">
+          <label>Total Cost to Patient ($)</label>
+          <input type="number" id="sched-total" placeholder="auto-calculated" min="0" step="0.01" oninput="calcScheduleFromTotal()">
+        </div>
+      </div>
+      <div id="sched-result" style="display:none;background:#F0F7F0;border:1.5px solid #1a7a3c;border-radius:8px;padding:14px 16px;margin-bottom:14px;">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;">
+          <div>
+            <div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;">Per Payment</div>
+            <div id="sched-r-per" style="font-size:20px;font-weight:700;color:#1a7a3c;"></div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;">Payments</div>
+            <div id="sched-r-num" style="font-size:20px;font-weight:700;color:var(--navy);"></div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;">Total</div>
+            <div id="sched-r-total" style="font-size:20px;font-weight:700;color:var(--navy);"></div>
+          </div>
+        </div>
+        <div id="sched-r-duration" style="text-align:center;margin-top:10px;font-size:12px;color:#555;border-top:1px solid #c5e0c5;padding-top:8px;"></div>
+      </div>
+
+      <div class="section-divider">Payment Method</div>
+      <div class="payment-method-tabs">
+        <button class="pm-tab active" onclick="showPM('pm-card')">Credit / Debit Card</button>
+        <button class="pm-tab" onclick="showPM('pm-bank')">Checking / Savings (ACH)</button>
+      </div>
+
+      <div class="pm-section active" id="pm-card">
+        <div class="field-grid g2">
+          <div class="field">
+            <label>Card Type</label>
+            <select id="ach-card-type">
+              <option value="">Select…</option>
+              <option>Visa</option>
+              <option>MasterCard</option>
+              <option>American Express</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Card Number</label>
+            <input type="text" id="ach-card-num" placeholder="•••• •••• •••• ••••" maxlength="19">
+          </div>
+          <div class="field">
+            <label>Expiration Date</label>
+            <input type="text" id="ach-card-exp" placeholder="MM/YY" maxlength="5">
+          </div>
+          <div class="field">
+            <label>CVC</label>
+            <input type="text" id="ach-card-cvc" placeholder="•••" maxlength="4">
+          </div>
+          <div class="field">
+            <label>Billing ZIP Code</label>
+            <input type="text" id="ach-card-zip" placeholder="40353" maxlength="10">
+          </div>
+        </div>
+      </div>
+
+      <div class="pm-section" id="pm-bank">
+        <div class="field-grid g2">
+          <div class="field">
+            <label>Routing Number</label>
+            <input type="text" id="ach-routing" placeholder="9-digit routing number" maxlength="9">
+          </div>
+          <div class="field">
+            <label>Account Number</label>
+            <input type="text" id="ach-account" placeholder="Account number">
+          </div>
+          <div class="field">
+            <label>Account Type</label>
+            <select id="ach-account-type">
+              <option value="">Select…</option>
+              <option>Checking</option>
+              <option>Savings</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="sig-block">
+        <div class="sig-block-title">Authorization Signatures</div>
+        <div class="sig-lines">
+          <div class="sig-field">
+            <input class="sig-input auto-filled" id="ach-sig-name" type="text" readonly>
+            <span class="sig-label">Patient name (auto-filled)</span>
+          </div>
+          <div class="sig-field">
+            <input class="sig-input" id="ach-sig-pt" type="text" placeholder="">
+            <span class="sig-label">Patient signature</span>
+          </div>
+          <div class="sig-field">
+            <input class="sig-input" id="ach-sig-staff" type="text" placeholder="">
+            <span class="sig-label">Staff signature</span>
+          </div>
+          <div class="sig-field">
+            <input class="sig-input" id="ach-sig-date" type="date">
+            <span class="sig-label">Date</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Financial Hardship Option -->
+      <div style="margin-top:20px">
+        <div class="section-divider">Financial Hardship Arrangement (if applicable)</div>
+        <div class="card-note">
+          By requesting a financial hardship arrangement, the patient acknowledges that full fees would prevent them from receiving care. Any agreement made is strictly confidential and differs from the standard office fee schedule. If insurance demands full deductible/co-payment, the patient agrees to notify their carrier of the partial payment arrangement. This plan is offered as a courtesy at 0% interest. If care is discontinued before completion, any balance owed is due within 10 days or via a payment plan paid off within 90 days. If a third-party insurance claim arises during care, this arrangement becomes null and void.
+        </div>
+        <div class="field-grid g3">
+          <div class="field">
+            <label>Down Payment</label>
+            <input type="text" id="hardship-down" placeholder="$99.00" value="$99.00">
+          </div>
+          <div class="field">
+            <label>Monthly Amount</label>
+            <input type="text" id="hardship-monthly" placeholder="e.g. $150/month">
+          </div>
+          <div class="field">
+            <label>Savings %</label>
+            <input type="text" id="hardship-savings" placeholder="30%" value="30%">
+          </div>
+        </div>
+        <div class="sig-lines" style="margin-top:12px">
+          <div class="sig-field">
+            <input class="sig-input auto-filled" id="hardship-sig-name" type="text" readonly>
+            <span class="sig-label">Patient name (auto-filled)</span>
+          </div>
+          <div class="sig-field">
+            <input class="sig-input" id="hardship-sig-pt" type="text" placeholder="">
+            <span class="sig-label">Patient signature</span>
+          </div>
+          <div class="sig-field">
+            <input class="sig-input" id="hardship-sig-staff" type="text" placeholder="">
+            <span class="sig-label">Staff / doctor signature</span>
+          </div>
+          <div class="sig-field">
+            <input class="sig-input" id="hardship-sig-date" type="date">
+            <span class="sig-label">Date</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="action-bar">
+    <button class="btn btn-secondary" onclick="showPage('page-gfe')">← Back</button>
+    <button class="btn btn-gold" onclick="window.print()">🖨 Print All Forms</button>
+    <button class="btn btn-primary" style="background:#1a7a3c;border-color:#1a7a3c;font-size:14px;padding:10px 22px;" onclick="window.open('https://pay.streampay.streamlinepayments.com/#/kfuyxZS1lHQ7dK3G6F%2525252fJxMy7u2a5V9qXBqrySmvCURjcHji63vN2DQ%2525253d%2525253d/bNx%2525252fV4IXKcKcJLJchpc7vMy7u2a5V9qXBqrySmvCURjcHji63vN2DQ%2525253d%2525253d/pay','payWin','width=815,height=700,location=0,menubar=0,resizable=0,scrollbars=1,status=0,titlebar=0,toolbar=0');">💳 Pay Now</button>
+  </div>
+</div>
+
+<script>
+// ---- LOGO ----
+document.getElementById('clinic-logo').src='data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/wAARCADIAZADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD3+iiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP/Z';
+
+// ---- TABS ----
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+    b.classList.toggle('active', b.getAttribute('onclick').includes(id));
+  });
+  window.scrollTo(0,0);
+  if(id==='page-gfe') populateGFE();
+  if(id==='page-ach') populateACH();
+  if(id==='page-rof') populateROF();
+}
+
+// ---- SYNC FIELDS ----
+const syncMap = {
+  'pt-name':   ['rof-pt-name','gfe-pt-name','gfe-sig-name','ach-name','ach-sig-name','hardship-sig-name'],
+  'pt-address':['ach-address'],
+  'pt-phone':  ['ach-phone'],
+  'pt-email':  ['gfe-pt-email'],
+  'ins-primary':[]
+};
+function syncField(srcId){
+  const val = document.getElementById(srcId).value;
+  (syncMap[srcId]||[]).forEach(tid=>{
+    const el=document.getElementById(tid);
+    if(el){el.value=val;}
+  });
+}
+
+// ---- DEDUCTIBLE AUTO-CALC ----
+function autoCalcDed(){
+  var d=parseFloat(document.getElementById('deductible').value)||0;
+  var m=parseFloat(document.getElementById('ded-met').value)||0;
+  if(d>0) document.getElementById('ded-left').value=Math.max(0,d-m).toFixed(2);
+}
+
+// ---- VISIT COUNTER ----
+function updateVisits(){
+  var pw=parseInt(document.getElementById('freq-per-week').value)||2;
+  var wk=parseInt(document.getElementById('freq-weeks').value)||12;
+  var total=Math.round(pw*wk);
+  document.getElementById('visits-badge').textContent='= '+total+' visits';
+  calcSummary();
+  updateGymMonthsLabel();
+  updateSavings();
+  updateProtoUI();
+}
+
+// ---- SERVICE TOGGLES ----
+function toggleTx(el){
+  el.classList.toggle('active');
+  calcSummary();
+}
+function adjQty(id,delta){
+  var el=document.getElementById(id);
+  var cur=parseInt(el.dataset.qty)||1;
+  var next=Math.max(1,cur+delta);
+  el.dataset.qty=next;
+  document.getElementById('qty-'+id).textContent=next;
+  calcSummary();
+}
+
+// ---- FORMAT ----
+function fmt(n){return'$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
+
+// ---- CALCULATE ----
+// ── FEE SCHEDULES ────────────────────────────────────────────────────────
+var FEE = {
+  anthem: {
+    '97032':10.07,'97010':3.89,'97110':22.00,'97112':22.00,'97140':20.50,
+    '97530':18.37,'97012':10.84,'98940':33.34,'98941':35.50,'98942':37.28,
+    '98943':16.88,'99213':39.20,'99214':58.46,'99204':94.71,'99205':119.56,
+    '72040':33.65,'72050':48.43
+  },
+  aetna: {
+    '97032':10.28,'97010':3.00,'97110':17.86,'97112':18.23,'97140':16.45,
+    '97530':18.37,'97012':9.19,'98940':21.29,'98941':28.29,'98942':35.30,
+    '98943':19.68,'99213':39.20,'99214':58.46,'99204':94.71,'99205':119.56,
+    '72040':27.92,'72050':39.52
+  },
+  medicare: {
+    '97032':13.49,'97010':5.64,'97110':27.05,'97112':30.09,'97140':25.55,
+    '97530':32.12,'97012':13.49,'98940':25.10,'98941':36.59,'98942':47.52,
+    '98943':0,'99213':83.30,'99214':117.60,'99204':153.88,'99205':203.53,
+    '72040':34.66,'72050':47.05
+  }
+};
+
+// ── PATIENT TYPE & CARRIER ────────────────────────────────────────────────
+window._patientType = 'cash'; // 'cash' | 'insurance'
+window._carrier = '';         // 'anthem'|'aetna'|'medicare'|'uhc'|'other'
+
+function setPatientType(type){
+  window._patientType = type;
+  var isCash = (type === 'cash');
+  document.getElementById('toggle-cash').style.background = isCash ? '#2C3E5A' : 'var(--surface-2)';
+  document.getElementById('toggle-cash').style.color = isCash ? 'white' : 'var(--text-muted)';
+  document.getElementById('toggle-ins').style.background = !isCash ? '#2C3E5A' : 'var(--surface-2)';
+  document.getElementById('toggle-ins').style.color = !isCash ? 'white' : 'var(--text-muted)';
+  document.getElementById('carrier-row').style.display = isCash ? 'none' : 'block';
+  if(isCash){ window._carrier = 'cash'; updateCarrierNote(); }
+  calcSummary();
+}
+
+function onCarrierChange(){
+  window._carrier = document.getElementById('carrier-select').value || '';
+  updateCarrierNote();
+  calcSummary();
+}
+
+function updateCarrierNote(){
+  var note = document.getElementById('carrier-note');
+  var c = window._carrier;
+  var msgs = {
+    anthem: {cls:'#EEF3FA',border:'#2C3E5A',color:'#1A2535', txt:'✅ Anthem BCBS — In-network. Co-insurance applies to Anthem allowable. Insurance pays Integrity directly.'},
+    aetna:  {cls:'#EEF3FA',border:'#2C3E5A',color:'#1A2535', txt:'✅ Aetna — In-network. Co-insurance applies to Aetna allowable. Insurance pays Integrity directly.'},
+    medicare:{cls:'#FFF8EE',border:'#C9A84C',color:'#6B5200', txt:'⚠️ Medicare — Non-assignment. Patient pays $78/visit at time of service. We bill Medicare on your behalf; Medicare reimburses the patient directly for the adjustment only.'},
+    uhc:    {cls:'#FFF8EE',border:'#C9A84C',color:'#6B5200', txt:'⚠️ UHC / United Healthcare — Non-assignment. Patient pays $78/visit at time of service. We bill UHC on your behalf; UHC reimburses the patient a flat $45.'},
+    other:  {cls:'#FFF8EE',border:'#C9A84C',color:'#6B5200', txt:'ℹ️ Out-of-network / Other carrier — Billed as cash at $78/visit. Patient is responsible for full amount at time of service.'},
+    cash:   null
+  };
+  var m = msgs[c];
+  if(m){ note.style.cssText='display:block;background:'+m.cls+';border:1.5px solid '+m.border+';border-radius:6px;padding:10px 14px;font-size:11.5px;color:'+m.color+';line-height:1.6;margin-top:8px'; note.textContent=m.txt; }
+  else note.style.display='none';
+}
+
+function isCashMode(){
+  var c=window._carrier;
+  return c==='cash'||c==='medicare'||c==='uhc'||c==='other'||c==='';
+}
+
+function getRate(code){
+  var c=window._carrier;
+  if(c==='anthem'||c==='aetna'||c==='medicare') return FEE[c][code]||0;
+  return 0;
+}
+
+function calcSummary(){
+  var pw=parseInt(document.getElementById('freq-per-week').value)||2;
+  var wk=parseInt(document.getElementById('freq-weeks').value)||12;
+  var totalVisits=Math.round(pw*wk);
+  var carrier=window._carrier;
+  var cashMode=isCashMode();
+
+  // ── CASH / NON-ASSIGNMENT MODE ──────────────────────────────────────────
+  if(cashMode){
+    var protoOn=window._protoOn||false;
+    var emsVisits=protoOn?Math.min(totalVisits,12):0;
+    var artQty=protoOn?Math.round(totalVisits/2):0;
+    var heatTotal=protoOn?10*totalVisits:0;
+
+    // Base: $78/visit flat if protocol on OR if any per-visit selected
+    var hasPerVisit=protoOn||document.querySelectorAll('.tx-row.active[data-type="pervisit"]').length>0;
+    var basePerVisit=hasPerVisit?78:0;
+    var baseBilled=basePerVisit*totalVisits;
+
+    // Add-ons (qty/once items only — not per-visit since those are in the $78 flat)
+    var addOnTotal=0, addOnLines=[];
+    document.querySelectorAll('.tx-row.active').forEach(function(el){
+      var type=el.dataset.type;
+      var price=parseFloat(el.dataset.price)||0;
+      var name=el.querySelector('.tx-name').textContent;
+      if(type==='pervisit') return; // included in $78 flat
+      var qty=parseInt(el.dataset.qty)||1;
+      addOnTotal+=price*qty;
+      addOnLines.push({name,price,qty});
+    });
+
+    var ptTotal=baseBilled+addOnTotal+heatTotal;
+
+    // 99214 logic for cash
+    var exam99214Cash=0;
+    if(protoOn){
+      // Start: $65 × 50% = $32.50 patient-pay
+      // Mid + End: $65 each
+      exam99214Cash=32.50+65+65;
+      ptTotal+=exam99214Cash;
+    }
+
+    // Non-assignment reimbursement estimate
+    var reimbAmt=0, reimbNote='', reimbText='';
+    if(carrier==='medicare'){
+      // Find which CMT is selected
+      var cmt98940=document.getElementById('tx-98940');
+      var cmt98941=document.getElementById('tx-98941');
+      var cmtCode='98940';
+      if(cmt98941&&cmt98941.classList.contains('active')) cmtCode='98941';
+      var cmtRate=FEE.medicare[cmtCode]||25.10;
+      reimbAmt=cmtRate*totalVisits;
+      reimbNote='Based on Medicare KY allowable for '+cmtCode+' ('+fmt(cmtRate)+'/visit × '+totalVisits+' visits). Medicare only reimburses the chiropractic adjustment under medical necessity guidelines.';
+      reimbText='Integrity Chiropractic is a participating, non-participating provider that bills your insurance on your behalf. Medicare chooses to send the reimbursement rather than our office. You are responsible for full payment at time of service. Based on your plan, you may be reimbursed approximately '+fmt(reimbAmt)+' directly from Medicare.';
+    } else if(carrier==='uhc'){
+      reimbAmt=45;
+      reimbNote='UHC reimburses a flat $45 regardless of services rendered.';
+      reimbText='Integrity Chiropractic is a participating, non-participating provider that bills your insurance on your behalf. UHC chooses to send the reimbursement rather than our office. You are responsible for full payment at time of service. Based on your plan, you may be reimbursed approximately '+fmt(reimbAmt)+' directly from UHC.';
+    }
+
+    window._lastCalc={totalVisits,totalBilled:ptTotal,ptTotal,perVisitLines:[],extraLines:addOnLines,ptDeductible:0,ptCoins:0,copayPct:0,copayDollar:0,afterDed:0,insCoins:0,cashMode:true,carrier,reimbAmt,reimbText,reimbNote,heatTotal,exam99214Cash,protoOn,emsVisits,artQty};
+
+    // Display
+    var badge=document.getElementById('sum-mode-badge');
+    badge.style.display='block';
+    badge.textContent=carrier==='medicare'?'Medicare — Non-Assignment · Patient pays at visit':carrier==='uhc'?'UHC — Non-Assignment · Patient pays at visit':carrier==='other'?'Out-of-Network — Cash Rate':'Cash / Self-Pay';
+
+    document.getElementById('sum-ins-label').textContent='Insurance Reimb. to Patient';
+    document.getElementById('sum-visits').textContent=totalVisits+' visits';
+    document.getElementById('sum-total').textContent=fmt(ptTotal);
+    document.getElementById('sum-ins').textContent=(carrier==='medicare'||carrier==='uhc')?fmt(reimbAmt):'N/A';
+    document.getElementById('sum-pt').textContent=fmt(ptTotal);
+
+    var rows='';
+    if(hasPerVisit){
+      rows+='<div class="sum-row" style="opacity:.6;font-size:10px">Flat rate visits</div>';
+      rows+=`<div class="sum-row"><span>3-Phase Care Visit Rate</span><span>${fmt(basePerVisit)} × ${totalVisits} = ${fmt(baseBilled)}</span></div>`;
+    }
+    if(protoOn){
+      rows+=`<div class="sum-row" style="opacity:.65;font-size:10px;margin-top:5px">Protocol breakdown (included in $78/visit)</div>`;
+      rows+=`<div class="sum-row"><span>EMS/Interferential (97032) — visits 1–${emsVisits}</span><span>included</span></div>`;
+      rows+=`<div class="sum-row"><span>Therapeutic Exercise ×2 units (97110)</span><span>included</span></div>`;
+      rows+=`<div class="sum-row"><span>ART® (97140) — every other visit (${artQty})</span><span>included</span></div>`;
+      rows+=`<div class="sum-row" style="color:rgba(255,200,100,.9)"><span>Heat Therapy (97010) ×${totalVisits} — patient-pay add-on</span><span>${fmt(heatTotal)}</span></div>`;
+      rows+=`<div class="sum-row" style="opacity:.8"><span>Re-exam 99214 (Start 50% disc + Mid + End)</span><span>${fmt(exam99214Cash)}</span></div>`;
+    }
+    if(addOnLines.length){
+      rows+='<div class="sum-row" style="opacity:.6;font-size:10px;margin-top:5px">Add-on services</div>';
+      addOnLines.forEach(i=>{var lbl=i.qty>1?i.name+' ×'+i.qty:i.name;rows+=`<div class="sum-row"><span>${lbl}</span><span>${fmt(i.price*i.qty)}</span></div>`;});
+    }
+    rows+=`<div class="sum-row bold" style="margin-top:6px"><span>Patient pays at time of service</span><span>${fmt(ptTotal)}</span></div>`;
+
+    // Medicare add-on reimbursement note
+    if(carrier==='medicare'&&protoOn){
+      rows+=`<div class="sum-row" style="margin-top:8px;opacity:.75;font-size:10.5px;border-top:1px solid rgba(255,255,255,.2);padding-top:6px"><span>What We Expect Medicare to Reimburse You (Medical Necessity Guidelines)</span><span>${fmt(reimbAmt)}</span></div>`;
+      rows+=`<div class="sum-row" style="opacity:.5;font-size:10px;font-style:italic"><span>**Not a guarantee of payment</span><span></span></div>`;
+    }
+
+    document.getElementById('breakdown-rows').innerHTML=rows;
+
+    // Non-par disclaimer block
+    var disc=document.getElementById('nonpar-disclaimer');
+    if(carrier==='medicare'||carrier==='uhc'){
+      disc.style.display='block';
+      document.getElementById('nonpar-text').textContent=reimbText;
+      document.getElementById('nonpar-reimb-amount').textContent=fmt(reimbAmt);
+      document.getElementById('nonpar-reimb-note').textContent=reimbNote;
+    } else disc.style.display='none';
+
+    document.getElementById('sum-note').style.display='none';
+    document.getElementById('summary-wrap').style.display='block';
+    return;
+  }
+
+  // ── INSURANCE / ASSIGNMENT MODE (Anthem & Aetna) ────────────────────────
+  var copayDollar=parseFloat(document.getElementById('copay-dollar').value)||0;
+  var copayPct=(parseFloat(document.getElementById('copay-pct').value)||0)/100;
+  var deductible=parseFloat(document.getElementById('deductible').value)||0;
+  var dedMet=parseFloat(document.getElementById('ded-met').value)||0;
+  var dedLeft=parseFloat(document.getElementById('ded-left').value)||Math.max(0,deductible-dedMet);
+
+  var perVisitTotal=0, extraTotal=0;
+  var perVisitLines=[], extraLines=[];
+  var protoOn=window._protoOn||false;
+  var emsVisits=protoOn?Math.min(totalVisits,12):0;
+  var artQty=protoOn?Math.round(totalVisits/2):0;
+
+  if(protoOn){
+    var emsRate=getRate('97032');
+    var exRate=getRate('97110')*2;
+    var artRate=getRate('97140');
+    // EMS capped at 12 visits
+    extraTotal+=emsRate*emsVisits;
+    extraLines.push({name:'EMS / Interferential (97032) — visits 1–'+emsVisits,price:emsRate,qty:emsVisits});
+    // Exercise x2 every visit
+    perVisitTotal+=exRate;
+    perVisitLines.push({name:'Therapeutic Exercise ×2 units (97110)',price:exRate,qty:totalVisits});
+    // ART every other visit
+    extraTotal+=artRate*artQty;
+    extraLines.push({name:'Active Release Technique® (97140) — every other visit',price:artRate,qty:artQty});
+    // 99214: start (50% UCR patient-pay) + mid + end (allowable through ins)
+    var exam99214Rate=getRate('99214');
+    extraTotal+=exam99214Rate*2; // mid + end through insurance
+    extraLines.push({name:'Re-exam 99214 (mid + end visits)',price:exam99214Rate,qty:2});
+  }
+
+  document.querySelectorAll('.tx-row.active').forEach(function(el){
+    var price=parseFloat(el.dataset.price)||0;
+    var type=el.dataset.type;
+    var name=el.querySelector('.tx-name').textContent;
+    // Use allowable if available, else UCR
+    var codeMap={'CMT – Spinal':'98940','CMT – Non-Spinal':'98943','Therapeutic Exercise':'97110',
+      'Neuromuscular Re-ed.':'97112','Therapeutic Activities':'97530','97012':'97012',
+      'Cervical Extension Traction':'97012'};
+    if(type==='pervisit'){
+      perVisitTotal+=price;
+      perVisitLines.push({name,price,qty:totalVisits});
+    } else {
+      var qty=parseInt(el.dataset.qty)||1;
+      extraTotal+=price*qty;
+      extraLines.push({name,price,qty});
+    }
+  });
+
+  var recurringTotal=perVisitTotal*totalVisits;
+  var totalBilled=recurringTotal+extraTotal;
+  var ptDeductible=Math.min(dedLeft,totalBilled);
+  var afterDed=Math.max(0,totalBilled-ptDeductible);
+  var ptCoins=0,insCoins=0;
+  if(copayDollar>0){ptCoins=copayDollar*totalVisits;insCoins=Math.max(0,afterDed-ptCoins);}
+  else if(copayPct>0){ptCoins=afterDed*copayPct;insCoins=afterDed*(1-copayPct);}
+  else{insCoins=afterDed;}
+  var ptTotal=ptDeductible+Math.max(0,ptCoins);
+  var heatTotal=protoOn?10*totalVisits:0;
+  var exam99214Start=protoOn?32.50:0; // 50% of $65 UCR, patient-pay
+  ptTotal+=heatTotal+exam99214Start;
+
+  window._lastCalc={totalVisits,totalBilled,ptTotal,perVisitLines,extraLines,ptDeductible,ptCoins,copayPct,copayDollar,afterDed,insCoins:Math.max(0,insCoins),cashMode:false,carrier,heatTotal,protoOn,emsVisits,artQty};
+
+  var badge=document.getElementById('sum-mode-badge');
+  badge.style.display='block';
+  badge.textContent=(carrier==='anthem'?'Anthem BCBS':carrier==='aetna'?'Aetna':carrier)+' — Allowable-Based Estimate';
+
+  document.getElementById('sum-ins-label').textContent='Est. Insurance Pays';
+  document.getElementById('sum-visits').textContent=totalVisits+' visits';
+  document.getElementById('sum-total').textContent=fmt(totalBilled);
+  document.getElementById('sum-ins').textContent=fmt(Math.max(0,insCoins));
+  document.getElementById('sum-pt').textContent=fmt(ptTotal);
+
+  var rows='';
+  if(perVisitLines.length){
+    rows+='<div class="sum-row" style="opacity:.6;font-size:10px">Per-visit services (allowable) ×'+totalVisits+' visits</div>';
+    perVisitLines.forEach(i=>{rows+=`<div class="sum-row"><span>${i.name}</span><span>${fmt(i.price*i.qty)}</span></div>`;});
+  }
+  if(extraLines.length){
+    rows+='<div class="sum-row" style="opacity:.6;font-size:10px;margin-top:6px">Additional / protocol services</div>';
+    extraLines.forEach(i=>{var lbl=i.qty>1?i.name+' ×'+i.qty:i.name;rows+=`<div class="sum-row"><span>${lbl}</span><span>${fmt(i.price*i.qty)}</span></div>`;});
+  }
+  if(protoOn){
+    rows+=`<div class="sum-row" style="color:rgba(255,200,100,.9)"><span>Heat Therapy (97010) ×${totalVisits} — patient-pay only</span><span>${fmt(heatTotal)}</span></div>`;
+    rows+=`<div class="sum-row" style="color:rgba(255,200,100,.9)"><span>Re-exam 99214 (Start visit — 50% disc, patient-pay)</span><span>${fmt(exam99214Start)}</span></div>`;
+  }
+  if(dedLeft>0) rows+=`<div class="sum-row" style="margin-top:6px"><span>Remaining deductible (patient pays)</span><span>${fmt(ptDeductible)}</span></div>`;
+  if(copayDollar>0) rows+=`<div class="sum-row"><span>Co-pays (${totalVisits}×${fmt(copayDollar)})</span><span>${fmt(Math.max(0,ptCoins))}</span></div>`;
+  else if(copayPct>0) rows+=`<div class="sum-row"><span>Co-insurance (${(copayPct*100).toFixed(0)}% of ${fmt(afterDed)})</span><span>${fmt(ptCoins)}</span></div>`;
+  rows+=`<div class="sum-row bold"><span>Patient total out-of-pocket</span><span>${fmt(ptTotal)}</span></div>`;
+  document.getElementById('breakdown-rows').innerHTML=rows;
+
+  document.getElementById('nonpar-disclaimer').style.display='none';
+  var insName=document.getElementById('ins-primary').value.trim()||carrier;
+  var noteEl=document.getElementById('sum-note');
+  noteEl.textContent='Estimate based on '+insName+' allowable rates — not a guarantee of coverage.';
+  noteEl.style.display='inline-block';
+  document.getElementById('summary-wrap').style.display='block';
+}
+
+function calcAndNext(){
+  calcSummary();
+  showPage('page-rof');
+}
+
+// ---- POPULATE DOWNSTREAM FORMS ----
+function populateROF(){
+  document.getElementById('rof-pt-name').value=document.getElementById('pt-name').value;
+}
+function populateGFE(){
+  var c=window._lastCalc||{};
+  var ptName=document.getElementById('pt-name').value;
+  var ptEmail=document.getElementById('pt-email').value;
+  document.getElementById('gfe-pt-name').value=ptName;
+  document.getElementById('gfe-pt-email').value=ptEmail;
+  document.getElementById('gfe-sig-name').value=ptName;
+  if(c.totalVisits){
+    document.getElementById('gfe-visits').value=c.totalVisits+' visits';
+    document.getElementById('gfe-total').value=fmt(c.totalBilled);
+    var discounted=c.ptTotal*0.80;
+    var savings=c.ptTotal*0.20;
+    document.getElementById('gfe-prepay').textContent=fmt(discounted);
+    document.getElementById('gfe-discount').textContent=fmt(savings);
+    var notesEl=document.getElementById('gfe-plan-summary');
+    var activeNames=Array.from(document.querySelectorAll('.tx-row.active')).map(e=>e.querySelector('.tx-name').textContent).join(' · ');
+    notesEl.textContent='Services ordered: '+activeNames+' | Total: '+fmt(c.totalBilled)+' | Patient responsibility: '+fmt(c.ptTotal);
+  }
+  updateGFE();
+  updateSavings();
+}
+function updateGFE(){
+  var c=window._lastCalc||{};
+  var ptTotal=c.ptTotal||0;
+  if(ptTotal>0){
+    var biweekly=parseFloat(document.getElementById('gfe-biweekly').value)||0;
+    var months=parseInt(document.getElementById('gfe-months').value)||9;
+    if(!biweekly){
+      biweekly=Math.ceil((ptTotal-99)/(months*2)*100)/100;
+      document.getElementById('gfe-biweekly').value=biweekly.toFixed(2);
+    }
+    document.getElementById('gfe-plan-desc').textContent=`Then ${fmt(biweekly)} bi-weekly for ${months} months — no finance charge, no interest.`;
+  }
+}
+// ---- 3-PHASE PROTOCOL ----
+window._protoOn=false;
+function toggleProtocol(){
+  window._protoOn=!window._protoOn;
+  var chk=document.getElementById('proto-check');
+  var ico=document.getElementById('proto-icon');
+  var body=document.getElementById('proto-body');
+  if(window._protoOn){
+    chk.style.background='#1E2E42';chk.style.borderColor='#1E2E42';ico.style.display='block';
+    body.style.display='block';
+  } else {
+    chk.style.background='white';chk.style.borderColor='rgba(30,46,66,.4)';ico.style.display='none';
+    body.style.display='none';
+  }
+  updateProtoUI();
+  calcSummary();
+}
+function updateProtoUI(){
+  if(!window._protoOn) return;
+  var pw=parseInt(document.getElementById('freq-per-week').value)||2;
+  var wk=parseInt(document.getElementById('freq-weeks').value)||12;
+  var V=Math.round(pw*wk);
+  var artQty=Math.round(V/2);
+  document.getElementById('proto-art-qty').textContent=artQty+' visits';
+  // subtotal: EMS($65×V) + Exercise($130×V) + ART($65×artQty) + Heat($10×V)
+  var sub=(65*V)+(130*V)+(65*artQty)+(10*V);
+  document.getElementById('proto-subtotal').textContent=fmt(sub);
+}
+
+// ---- GYM MEMBERSHIP ----
+window._gymOn=false;
+window._gymComp=false;
+function toggleGym(){
+  window._gymOn=!window._gymOn;
+  var chk=document.getElementById('gym-check');
+  var ico=document.getElementById('gym-check-icon');
+  if(window._gymOn){chk.style.background='var(--fill-accent)';chk.style.borderColor='var(--fill-accent)';ico.style.display='block';}
+  else{chk.style.background='';chk.style.borderColor='';ico.style.display='none';window._gymComp=false;updateGymCompUI();}
+  updateGymMonthsLabel();
+  updateSavings();
+}
+function toggleGymComp(e){
+  e.stopPropagation();
+  if(!window._gymOn) return;
+  window._gymComp=!window._gymComp;
+  updateGymCompUI();
+  updateSavings();
+}
+function updateGymCompUI(){
+  var wrap=document.getElementById('gym-comp-wrap');
+  var chk=document.getElementById('gym-comp-check');
+  var ico=document.getElementById('gym-comp-icon');
+  if(window._gymComp){wrap.style.background='var(--bg-success)';wrap.style.borderColor='var(--border-success)';chk.style.background='var(--fill-success)';chk.style.borderColor='var(--fill-success)';ico.style.display='block';}
+  else{wrap.style.background='';wrap.style.borderColor='';chk.style.background='';chk.style.borderColor='';ico.style.display='none';}
+}
+function updateGymMonthsLabel(){
+  var wk=parseInt(document.getElementById('freq-weeks').value)||12;
+  var months=Math.max(1,Math.round(wk/4.33));
+  document.getElementById('gym-months-label').textContent=window._gymOn?months+' months included':'';
+}
+
+// ---- HOME EXERCISE KIT ----
+window._kitOn=true;
+window._kitComp=true;
+function toggleKit(){
+  window._kitOn=!window._kitOn;
+  var chk=document.getElementById('kit-check');
+  var ico=document.getElementById('kit-check-icon');
+  if(window._kitOn){chk.style.background='var(--fill-accent)';chk.style.borderColor='var(--fill-accent)';ico.style.display='block';}
+  else{chk.style.background='';chk.style.borderColor='';ico.style.display='none';window._kitComp=false;updateKitCompUI();}
+  updateSavings();
+}
+function toggleKitComp(e){
+  e.stopPropagation();
+  if(!window._kitOn) return;
+  window._kitComp=!window._kitComp;
+  updateKitCompUI();
+  updateSavings();
+}
+function updateKitCompUI(){
+  var wrap=document.getElementById('kit-comp-wrap');
+  var chk=document.getElementById('kit-comp-check');
+  var ico=document.getElementById('kit-comp-icon');
+  if(window._kitComp){wrap.style.background='var(--bg-success)';wrap.style.borderColor='var(--border-success)';chk.style.background='var(--fill-success)';chk.style.borderColor='var(--fill-success)';ico.style.display='block';}
+  else{wrap.style.background='';wrap.style.borderColor='';chk.style.background='';chk.style.borderColor='';ico.style.display='none';}
+}
+
+// ---- COMBINED SAVINGS ----
+function updateSavings(){
+  var gymActive=window._gymOn&&window._gymComp;
+  var kitActive=window._kitOn&&window._kitComp;
+  var block=document.getElementById('savings-block');
+  if(!gymActive&&!kitActive){block.style.display='none';return;}
+  var c=window._lastCalc||{};
+  var wk=parseInt(document.getElementById('freq-weeks').value)||12;
+  var months=Math.max(1,Math.round(wk/4.33));
+  var gymVal=gymActive?39*months:0;
+  var kitVal=kitActive?349:0;
+  var totalBonus=gymVal+kitVal;
+  var planAmt=c.ptTotal||0;
+  // gym row
+  var gymRow=document.getElementById('savings-gym-row');
+  if(gymActive){
+    gymRow.style.display='flex';
+    document.getElementById('gym-savings-months').textContent=months;
+    document.getElementById('gym-savings-value').textContent=fmt(gymVal);
+  } else gymRow.style.display='none';
+  // kit row
+  var kitRow=document.getElementById('savings-kit-row');
+  kitRow.style.display=kitActive?'flex':'none';
+  // total
+  document.getElementById('plan-total-value').textContent=fmt(planAmt+totalBonus);
+  // desc
+  var selOpt=document.querySelector('input[name="pay-choice"]:checked');
+  var optNum=selOpt?parseInt(selOpt.value):0;
+  var items=[];
+  if(gymActive) items.push('Gym Membership ('+months+' months, '+fmt(gymVal)+')');
+  if(kitActive) items.push('Home Exercise Kit + Coaching ($349.00)');
+  var itemStr=items.join(' and ');
+  var optStr=optNum===1?'Option 1 (Pre-Pay)':optNum===2?'Option 2 (Payment Plan)':'your selected option';
+  document.getElementById('savings-desc').textContent='With '+optStr+', your complimentary '+itemStr+' is included — bringing your total plan value to '+fmt(planAmt+totalBonus)+'.';
+  block.style.display='block';
+}
+
+function selectPayOpt(n){
+  document.getElementById('pay-opt-1').classList.toggle('selected',n===1);
+  document.getElementById('pay-opt-2').classList.toggle('selected',n===2);
+  document.querySelectorAll('input[name="pay-choice"]').forEach(r=>r.checked=(parseInt(r.value)===n));
+  updateSavings();
+}
+
+function populateACH(){
+  var c=window._lastCalc||{};
+  document.getElementById('ach-name').value=document.getElementById('pt-name').value;
+  document.getElementById('ach-address').value=document.getElementById('pt-address').value;
+  document.getElementById('ach-phone').value=document.getElementById('pt-phone').value;
+  document.getElementById('ach-sig-name').value=document.getElementById('pt-name').value;
+  document.getElementById('hardship-sig-name').value=document.getElementById('pt-name').value;
+  if(c.ptTotal){
+    document.getElementById('ach-balance').value=fmt(c.ptTotal);
+    document.getElementById('sched-total').value=c.ptTotal.toFixed(2);
+    calcScheduleFromTotal();
+  }
+}
+
+// ---- PAYMENT SCHEDULE CALCULATOR ----
+function updateSchedResult(perPayment, numPayments){
+  var total = perPayment * numPayments;
+  var months = numPayments / 2;
+  var yrs = Math.floor(months / 12);
+  var mos = Math.round(months % 12);
+  var durParts = [];
+  if(yrs > 0) durParts.push(yrs + ' yr' + (yrs>1?'s':''));
+  if(mos > 0) durParts.push(mos + ' month' + (mos>1?'s':''));
+  if(durParts.length===0) durParts.push(Math.round(months*4) + ' weeks');
+  var dur = durParts.join(', ');
+
+  document.getElementById('sched-r-per').textContent = '$' + perPayment.toFixed(2);
+  document.getElementById('sched-r-num').textContent = numPayments;
+  document.getElementById('sched-r-total').textContent = '$' + total.toFixed(2);
+  document.getElementById('sched-r-duration').textContent =
+    'Billed twice/month — plan spans approximately ' + dur;
+  document.getElementById('sched-result').style.display='block';
+
+  // sync number-of-debits field
+  document.getElementById('ach-num-debits').value = numPayments;
+}
+
+function calcScheduleFromPayment(){
+  var pp = parseFloat(document.getElementById('sched-per-payment').value)||0;
+  var n  = parseInt(document.getElementById('sched-num-payments').value)||0;
+  if(pp > 0 && n > 0){
+    // update total field without re-triggering
+    document.getElementById('sched-total').value = (pp * n).toFixed(2);
+    updateSchedResult(pp, n);
+  } else if(pp > 0){
+    // try to derive n from existing total
+    var t = parseFloat(document.getElementById('sched-total').value)||0;
+    if(t > 0){
+      var derived = Math.ceil(t / pp);
+      document.getElementById('sched-num-payments').value = derived;
+      updateSchedResult(pp, derived);
+    }
+  }
+}
+
+function calcScheduleFromTotal(){
+  var t  = parseFloat(document.getElementById('sched-total').value)||0;
+  var n  = parseInt(document.getElementById('sched-num-payments').value)||0;
+  var pp = parseFloat(document.getElementById('sched-per-payment').value)||0;
+  if(t > 0 && n > 0){
+    var calc = t / n;
+    document.getElementById('sched-per-payment').value = calc.toFixed(2);
+    updateSchedResult(calc, n);
+  } else if(t > 0 && pp > 0){
+    var derivedN = Math.ceil(t / pp);
+    document.getElementById('sched-num-payments').value = derivedN;
+    updateSchedResult(pp, derivedN);
+  }
+}
+
+// ---- PAYMENT METHOD TABS ----
+function showPM(id){
+  document.querySelectorAll('.pm-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.pm-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// Init
+setPatientType('cash');
+updateVisits();
+calcSummary();
+updateGymCompUI();
+updateKitCompUI();
+updateSavings();
+
+// ---- PATIENT SAVE / LOAD SYSTEM ----
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwCVHM-zHRu6MGzwn0nPaQVwTK652fx46LT6dtdCpwOXdzLTOyflhqYsJc3bdpNmHfy/exec';
+var _currentPatientKey = null;
+
+function collectState(){
+  // Text/number/date/email/textarea inputs
+  var textIds = [
+    'pt-name','pt-dob','pt-eff','pt-address','pt-phone','pt-email',
+    'ins-primary','ins-member-id','ins-secondary','ins-member-id2',
+    'pt-visits-yr','chiro-visit-limit','copay-dollar','copay-pct',
+    'deductible','ded-met','ded-left','ded-start','xray-coins','ins-notes',
+    'freq-per-week','freq-weeks',
+    'ach-date','ach-num-debits','ach-debit-date',
+    'sched-per-payment','sched-num-payments','sched-total',
+    'ach-routing','ach-account','ach-sig-pt','ach-sig-staff','ach-sig-date'
+  ];
+  var state = { fields:{}, radios:{}, activeTx:[], txQty:{}, checks:{}, patientType: window._patientType };
+  textIds.forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) state.fields[id] = el.value;
+  });
+  // Radios
+  ['therapy-covered','dme-covered','preauth','pay-choice'].forEach(function(name){
+    var el = document.querySelector('input[name="'+name+'"]:checked');
+    state.radios[name] = el ? el.value : null;
+  });
+  // Active tx rows
+  document.querySelectorAll('.tx-row').forEach(function(row){
+    var id = row.id;
+    if(row.classList.contains('active')) state.activeTx.push(id);
+    var qtyEl = document.getElementById('qty-'+id);
+    if(qtyEl) state.txQty[id] = qtyEl.textContent;
+  });
+  // Checkboxes
+  ['kit-bands-upper','kit-bands-lower','kit-liftiq'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) state.checks[id] = el.checked;
+  });
+  // Protocol & gym & kit toggles
+  state.protoOn = document.getElementById('proto-body').style.display !== 'none';
+  state.gymOn   = window._gymOn || false;
+  state.gymComp = window._gymComp || false;
+  state.kitOn   = window._kitOn !== false;
+  state.kitComp = window._kitComp || false;
+  // Pay option select
+  var selCard = document.getElementById('ach-card-type');
+  if(selCard) state.fields['ach-card-type'] = selCard.value;
+  var selAcc = document.getElementById('ach-account-type');
+  if(selAcc) state.fields['ach-account-type'] = selAcc.value;
+  return state;
+}
+
+function applyState(state){
+  if(!state) return;
+  // Patient type first
+  setPatientType(state.patientType || 'cash');
+  // Text fields
+  Object.keys(state.fields||{}).forEach(function(id){
+    var el = document.getElementById(id);
+    if(el){ el.value = state.fields[id]; if(el.tagName==='SELECT') el.value = state.fields[id]; }
+  });
+  // Radios
+  Object.keys(state.radios||{}).forEach(function(name){
+    var val = state.radios[name];
+    if(val){ var el = document.querySelector('input[name="'+name+'"][value="'+val+'"]'); if(el) el.checked=true; }
+  });
+  // Tx rows — reset all first
+  document.querySelectorAll('.tx-row').forEach(function(row){ row.classList.remove('active'); var qw=row.querySelector('.qty-wrap'); if(qw) qw.style.display='none'; });
+  (state.activeTx||[]).forEach(function(id){
+    var row = document.getElementById(id);
+    if(row){ row.classList.add('active'); var qw=row.querySelector('.qty-wrap'); if(qw) qw.style.display='flex'; }
+  });
+  Object.keys(state.txQty||{}).forEach(function(id){
+    var el = document.getElementById('qty-'+id);
+    if(el) el.textContent = state.txQty[id];
+  });
+  // Checkboxes
+  Object.keys(state.checks||{}).forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.checked = state.checks[id];
+  });
+  // Protocol
+  if(state.protoOn){
+    document.getElementById('proto-body').style.display='block';
+    document.getElementById('proto-icon').style.display='block';
+    document.getElementById('proto-check').style.background='var(--navy)';
+    document.getElementById('proto-check').style.borderColor='var(--navy)';
+  }
+  // Gym / kit
+  if(state.gymOn) { window._gymOn=true; updateGymCompUI(); }
+  if(state.gymComp) { window._gymComp=true; updateGymCompUI(); }
+  if(!state.kitOn) { window._kitOn=false; updateKitCompUI(); }
+  if(state.kitComp) { window._kitComp=true; updateKitCompUI(); }
+  // Recalc
+  updateVisits();
+  calcSummary();
+  updateSavings();
+  populateROF && populateROF();
+  populateGFE && populateGFE();
+  populateACH && populateACH();
+  // Restore schedule result if data present
+  var pp = parseFloat(document.getElementById('sched-per-payment').value)||0;
+  var n  = parseInt(document.getElementById('sched-num-payments').value)||0;
+  if(pp>0 && n>0) updateSchedResult(pp,n);
+}
+
+function savePatient(){
+  var name = (document.getElementById('pt-name').value||'').trim();
+  if(!name){ alert('Please enter a patient name before saving.'); return; }
+  var key = _currentPatientKey || ('pt_'+Date.now());
+  _currentPatientKey = key;
+  document.getElementById('save-status').textContent = '⏳ Saving...';
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'save', key: key, name: name, state: collectState() })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    if(data.ok){
+      document.getElementById('save-status').textContent = '✅ Saved: '+name+' ('+new Date().toLocaleTimeString()+')';
+    } else {
+      document.getElementById('save-status').textContent = '❌ Save failed';
+    }
+  })
+  .catch(function(){
+    document.getElementById('save-status').textContent = '❌ Save failed — check connection';
+  });
+}
+
+function showPatientList(){
+  var body = document.getElementById('patient-list-body');
+  body.innerHTML = '<p style="color:var(--text-muted);font-size:13px;text-align:center;padding:20px 0;">⏳ Loading patients...</p>';
+  document.getElementById('patient-modal').style.display='flex';
+  fetch(SCRIPT_URL+'?action=list')
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    var patients = data.patients || [];
+    if(patients.length===0){
+      body.innerHTML='<p style="color:var(--text-muted);font-size:13px;text-align:center;padding:20px 0;">No saved patients yet.</p>';
+    } else {
+      body.innerHTML = patients.map(function(p){
+        return '<div style="display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);">'
+          +'<div style="flex:1;">'
+          +'<div style="font-weight:600;font-size:13px;color:var(--navy);">'+p.name+'</div>'
+          +'<div style="font-size:11px;color:var(--text-muted);">Saved: '+p.savedAt+'</div>'
+          +'</div>'
+          +'<button onclick="loadPatient(\''+p.key+'\')" style="font-size:11px;padding:5px 10px;background:var(--navy);color:white;border:none;border-radius:4px;cursor:pointer;">Load</button>'
+          +'<button onclick="deletePatient(\''+p.key+'\')" style="font-size:11px;padding:5px 8px;background:#c0392b;color:white;border:none;border-radius:4px;cursor:pointer;">✕</button>'
+          +'</div>';
+      }).join('');
+    }
+  })
+  .catch(function(){
+    body.innerHTML='<p style="color:#c0392b;font-size:13px;text-align:center;padding:20px 0;">❌ Could not load patients — check connection.</p>';
+  });
+}
+
+function loadPatient(key){
+  document.getElementById('save-status').textContent = '⏳ Loading...';
+  fetch(SCRIPT_URL+'?action=load&key='+encodeURIComponent(key))
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    if(data.error){ document.getElementById('save-status').textContent = '❌ Could not load patient'; return; }
+    _currentPatientKey = data.key;
+    applyState(data.state);
+    document.getElementById('save-status').textContent = '📂 Loaded: '+data.name;
+    closePatientModal();
+  })
+  .catch(function(){
+    document.getElementById('save-status').textContent = '❌ Load failed — check connection';
+  });
+}
+
+function deletePatient(key){
+  if(!confirm('Delete this patient record?')) return;
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'delete', key: key })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    if(data.ok){
+      if(_currentPatientKey===key){ _currentPatientKey=null; document.getElementById('save-status').textContent='No patient loaded'; }
+      showPatientList();
+    }
+  });
+}
+
+function newPatient(){
+  if(!confirm('Clear all fields and start a new patient?')) return;
+  _currentPatientKey = null;
+  // Clear text fields
+  document.querySelectorAll('input:not([type=radio]):not([type=checkbox]), textarea, select').forEach(function(el){
+    if(!el.classList.contains('auto-filled')) el.value='';
+  });
+  // Reset radios
+  document.querySelectorAll('input[type=radio]').forEach(function(el){ el.checked=false; });
+  // Reset tx rows
+  document.querySelectorAll('.tx-row').forEach(function(row){ row.classList.remove('active'); var qw=row.querySelector('.qty-wrap'); if(qw) qw.style.display='none'; });
+  // Reset protocol
+  document.getElementById('proto-body').style.display='none';
+  document.getElementById('proto-icon').style.display='none';
+  document.getElementById('proto-check').style.background='white';
+  // Reset kit/gym
+  window._gymOn=false; window._gymComp=false; window._kitOn=true; window._kitComp=false;
+  updateGymCompUI(); updateKitCompUI();
+  // Reset schedule result
+  document.getElementById('sched-result').style.display='none';
+  // Re-init defaults
+  setPatientType('cash');
+  document.getElementById('freq-per-week').value='2';
+  document.getElementById('freq-weeks').value='12';
+  updateVisits(); calcSummary(); updateSavings();
+  document.getElementById('save-status').textContent='New patient — not yet saved';
+}
+
+function closePatientModal(){
+  document.getElementById('patient-modal').style.display='none';
+}
+
+// Auto-save every 60 seconds if a patient is loaded
+setInterval(function(){
+  if(_currentPatientKey && document.getElementById('pt-name').value.trim()){
+    savePatient();
+  }
+}, 60000);
+</script>
+</body>
+</html>
