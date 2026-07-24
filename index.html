@@ -165,6 +165,63 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .autofill-notice{font-size:10px;color:var(--navy);background:#EEF3FA;padding:4px 10px;border-radius:4px;margin-bottom:10px;display:inline-block}
 @media(max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr}.tx-grid{grid-template-columns:1fr}.payment-options{grid-template-columns:1fr}.sum-grid{grid-template-columns:1fr}.sig-lines{grid-template-columns:1fr}}
 @media print{.page-header,.action-bar,.tab-bar{display:none!important}.page{display:block!important;padding:12px}}
+
+/* ---- FEE SCHEDULE REFERENCE (Page 6) ---- */
+#page-fees{
+  --fee-red:#EF4444; --fee-red-lt:#FEE2E2; --fee-gold:#F59E0B; --fee-gold-lt:#FEF3C7;
+  --fee-green:#10B981; --fee-green-lt:#D1FAE5; --fee-slate:#64748B; --fee-slate-lt:#F1F5F9;
+  max-width:1150px;
+}
+#page-fees .fee-search-wrap{margin-bottom:14px;display:flex;gap:8px;align-items:center}
+#page-fees .fee-search-wrap input{flex:1;border:1.5px solid var(--border);border-radius:var(--radius);padding:9px 12px;font-size:13px;font-family:inherit;color:var(--text)}
+#page-fees .fee-search-wrap input:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 3px rgba(44,62,90,.08)}
+#page-fees .fee-search-count{font-size:11px;color:var(--text-muted);white-space:nowrap}
+#page-fees .fee-alert{background:var(--fee-gold-lt);border:1px solid var(--fee-gold);border-radius:8px;padding:10px 16px;font-size:12px;color:#92400E;margin-bottom:10px}
+#page-fees .fee-alert.danger{background:var(--fee-red-lt);border-color:var(--fee-red);color:#7F1D1D}
+#page-fees .fee-payer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-bottom:16px}
+#page-fees .fee-payer-card{background:var(--white);border-radius:10px;border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow)}
+#page-fees .fee-payer-card.investigate{border:2px solid var(--fee-red)}
+#page-fees .fee-payer-header{padding:11px 15px;display:flex;align-items:center;justify-content:space-between}
+#page-fees .fee-payer-name{font-size:14px;font-weight:700;color:#fff}
+#page-fees .fee-payer-type{font-size:10px;color:rgba(255,255,255,.75);margin-top:1px;text-transform:uppercase;letter-spacing:.05em}
+#page-fees .fee-payer-badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;background:rgba(255,255,255,.2);color:#fff;white-space:nowrap;flex-shrink:0;margin-left:8px}
+#page-fees .fee-payer-badge.danger-badge{background:var(--fee-red)}
+#page-fees .fee-bcbs{background:linear-gradient(135deg,#1E40AF,#1D4ED8)} #page-fees .fee-aetna{background:linear-gradient(135deg,#7C3AED,#6D28D9)}
+#page-fees .fee-aetnabh{background:linear-gradient(135deg,#8B5CF6,#7C3AED)} #page-fees .fee-wellcare{background:linear-gradient(135deg,#065F46,#047857)}
+#page-fees .fee-molina{background:linear-gradient(135deg,#0369A1,#0284C7)} #page-fees .fee-vaccn{background:linear-gradient(135deg,#9A3412,#C2410C)}
+#page-fees .fee-medicaid{background:linear-gradient(135deg,#1E3A5F,#1E40AF)} #page-fees .fee-anthem-ma{background:linear-gradient(135deg,#374151,#4B5563)}
+#page-fees .fee-humana{background:linear-gradient(135deg,#86198F,#A21CAF)} #page-fees .fee-wellcare-hmo{background:linear-gradient(135deg,#7F1D1D,#991B1B)}
+#page-fees .fee-rate-table{width:100%;border-collapse:collapse}
+#page-fees .fee-rate-table thead tr{background:var(--fee-slate-lt);border-bottom:1px solid var(--border)}
+#page-fees .fee-rate-table th{padding:6px 12px;font-size:10px;font-weight:600;color:var(--fee-slate);text-transform:uppercase;letter-spacing:.05em;text-align:left}
+#page-fees .fee-rate-table th:last-child{text-align:right}
+#page-fees .fee-rate-table td{padding:7px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+#page-fees .fee-rate-table tr:last-child td{border-bottom:none}
+#page-fees .fee-rate-table tr:hover td{background:#FAFAFA}
+#page-fees .fee-cpt-code{font-family:'SF Mono',Consolas,monospace;font-size:11.5px;font-weight:500;color:var(--navy);background:var(--fee-slate-lt);padding:2px 6px;border-radius:4px}
+#page-fees .fee-cpt-desc{color:var(--fee-slate);font-size:12px}
+#page-fees .fee-rate-amount{font-weight:700;font-size:13px;text-align:right;font-family:'SF Mono',Consolas,monospace;color:var(--navy)}
+#page-fees .fee-rate-amount.best{color:var(--fee-green)}
+#page-fees .fee-rate-amount.low{color:var(--fee-red)}
+#page-fees .fee-rate-amount.na{color:#CBD5E1;font-weight:400;font-size:11px}
+#page-fees .fee-section-row td{background:var(--fee-slate-lt);font-size:10px;font-weight:600;color:var(--fee-slate);text-transform:uppercase;letter-spacing:.06em;padding:4px 12px;border-bottom:1px solid var(--border)}
+#page-fees .fee-rules-area{padding:10px 12px;background:var(--fee-slate-lt);border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:6px}
+#page-fees .fee-rule-pill{font-size:10px;font-weight:500;padding:3px 8px;border-radius:20px;display:inline-flex;align-items:center;gap:4px}
+#page-fees .fee-rule-pill.required{background:var(--fee-red-lt);color:#991B1B}
+#page-fees .fee-rule-pill.covered{background:var(--fee-green-lt);color:#065F46}
+#page-fees .fee-rule-pill.warning{background:var(--fee-gold-lt);color:#92400E}
+#page-fees .fee-investigate-banner{background:var(--fee-red);color:#fff;font-size:11px;font-weight:600;padding:6px 16px;text-align:center}
+#page-fees .fee-quick-rules{background:var(--white);border-radius:10px;border:1px solid var(--border);padding:16px 20px;box-shadow:var(--shadow);margin-bottom:14px}
+#page-fees .fee-quick-rules-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:12px}
+#page-fees .fee-rules-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px}
+#page-fees .fee-rule-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:8px;font-size:12px;line-height:1.5}
+#page-fees .fee-rule-item.danger{background:var(--fee-red-lt);color:#7F1D1D}
+#page-fees .fee-rule-item.success{background:var(--fee-green-lt);color:#064E3B}
+#page-fees .fee-rule-item.caution{background:var(--fee-gold-lt);color:#78350F}
+#page-fees .fee-rule-dot{font-size:14px;flex-shrink:0;margin-top:1px}
+#page-fees .fee-footer{text-align:center;font-size:11px;color:var(--fee-slate);margin-top:10px;line-height:1.6}
+#page-fees .fee-payer-card.fee-hidden{display:none}
+@media print{#page-fees .fee-search-wrap{display:none}}
 </style>
 </head>
 <body>
@@ -183,6 +240,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <button class="tab-btn" onclick="showPage('page-rof')">③ Report of Findings</button>
     <button class="tab-btn" onclick="showPage('page-gfe')">④ Good Faith Estimate</button>
     <button class="tab-btn" onclick="showPage('page-ach')">⑤ Payment Authorization</button>
+    <button class="tab-btn" onclick="showPage('page-fees')">💲 Fee Schedule</button>
   </div>
   <div style="display:flex;align-items:center;gap:8px;padding:6px 16px 8px;background:#F0F4FA;border-top:1px solid var(--border);">
     <span id="save-status" style="font-size:11px;color:var(--text-muted);flex:1;">No patient loaded</span>
@@ -1124,6 +1182,207 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
+<!-- ========== PAGE 6: FEE SCHEDULE REFERENCE ========== -->
+<div class="page" id="page-fees">
+  <div class="card-note" style="margin-bottom:12px">Internal reference only — verified against 175+ real ERA remittance files, April–July 2026. Not shown to patients.</div>
+
+  <div class="fee-search-wrap">
+    <input type="text" id="fee-search" placeholder="🔍 Search payer or CPT code (e.g. Aetna, 98940)…" oninput="filterFeeCards()">
+    <span class="fee-search-count" id="fee-search-count"></span>
+  </div>
+
+  <div class="fee-alert danger">🚨 <strong>3 Payers Flagged for Investigation:</strong> Aetna Commercial, Humana, and KY Medicaid FFS show high denial rates on codes that SOMETIMES pay. This means per-patient eligibility/auth issues, not blanket non-coverage. See red-bordered cards below.</div>
+  <div class="fee-alert">⚠️ <strong>KY Medicaid Rate Cut Effective August 1, 2026:</strong> KY Medicaid, Molina/Passport, and Wellcare rates decrease 4%.</div>
+
+  <div class="fee-payer-grid">
+
+    <div class="fee-payer-card" data-payer="Anthem BCBS Commercial">
+      <div class="fee-payer-header fee-bcbs"><div><div class="fee-payer-name">Anthem BCBS Commercial</div><div class="fee-payer-type">Par · Verified</div></div><div class="fee-payer-badge">Best CMT + therapy</div></div>
+      <table class="fee-rate-table"><thead><tr><th>CPT</th><th>Description</th><th>Rate</th></tr></thead><tbody>
+        <tr class="fee-section-row"><td colspan="3">CMT</td></tr>
+        <tr><td><span class="fee-cpt-code">98940</span></td><td class="fee-cpt-desc">CMT 1-2 regions</td><td class="fee-rate-amount">$33.34</td></tr>
+        <tr><td><span class="fee-cpt-code">98941</span></td><td class="fee-cpt-desc">CMT 3-4 regions</td><td class="fee-rate-amount">$35.18</td></tr>
+        <tr><td><span class="fee-cpt-code">98942</span></td><td class="fee-cpt-desc">CMT 5 regions</td><td class="fee-rate-amount best">$86.74*</td></tr>
+        <tr><td><span class="fee-cpt-code">98943</span></td><td class="fee-cpt-desc">CMT extraspinal</td><td class="fee-rate-amount">$16.88</td></tr>
+        <tr class="fee-section-row"><td colspan="3">Therapy</td></tr>
+        <tr><td><span class="fee-cpt-code">97530</span></td><td class="fee-cpt-desc">Therapeutic Activities</td><td class="fee-rate-amount best">$67.50</td></tr>
+        <tr><td><span class="fee-cpt-code">97110</span></td><td class="fee-cpt-desc">Therapeutic Exercise</td><td class="fee-rate-amount">$22.00</td></tr>
+        <tr><td><span class="fee-cpt-code">97140</span></td><td class="fee-cpt-desc">Manual Therapy</td><td class="fee-rate-amount">$20.50</td></tr>
+        <tr class="fee-section-row"><td colspan="3">E/M</td></tr>
+        <tr><td><span class="fee-cpt-code">99213</span></td><td class="fee-cpt-desc">E/M Est. +25</td><td class="fee-rate-amount">$39.20</td></tr>
+        <tr><td><span class="fee-cpt-code">99214</span></td><td class="fee-cpt-desc">E/M Mod. +25</td><td class="fee-rate-amount">$58.46</td></tr>
+      </tbody></table>
+      <div class="fee-rules-area"><span class="fee-rule-pill covered">✓ 98943 covered $16.88</span><span class="fee-rule-pill required">-59 on 97110/97530 w/ CMT</span><span class="fee-rule-pill warning">*98942 verified via MA crossover only</span></div>
+    </div>
+
+    <div class="fee-payer-card investigate" data-payer="Aetna Commercial">
+      <div class="fee-investigate-banner">⚠ INVESTIGATE — 92% denial rate on 98940</div>
+      <div class="fee-payer-header fee-aetna"><div><div class="fee-payer-name">Aetna Commercial</div><div class="fee-payer-type">Verify Per-Patient</div></div><div class="fee-payer-badge danger-badge">Check eligibility</div></div>
+      <table class="fee-rate-table"><thead><tr><th>CPT</th><th>Description</th><th>Rate</th></tr></thead><tbody>
+        <tr class="fee-section-row"><td colspan="3">CMT — verify eligibility first</td></tr>
+        <tr><td><span class="fee-cpt-code">98940</span></td><td class="fee-cpt-desc">CMT 1-2 regions</td><td class="fee-rate-amount low">$6.29 avg*</td></tr>
+        <tr><td><span class="fee-cpt-code">98941</span></td><td class="fee-cpt-desc">CMT 3-4 regions</td><td class="fee-rate-amount">$28.29</td></tr>
+        <tr><td><span class="fee-cpt-code">98942</span></td><td class="fee-cpt-desc">CMT 5 regions</td><td class="fee-rate-amount">$35.30</td></tr>
+        <tr><td><span class="fee-cpt-code">98943</span></td><td class="fee-cpt-desc">CMT extraspinal</td><td class="fee-rate-amount">$15.39</td></tr>
+        <tr class="fee-section-row"><td colspan="3">E/M</td></tr>
+        <tr><td><span class="fee-cpt-code">99213</span></td><td class="fee-cpt-desc">E/M Est. +25</td><td class="fee-rate-amount best">$56.95</td></tr>
+        <tr><td><span class="fee-cpt-code">99214</span></td><td class="fee-cpt-desc">E/M Mod. +25</td><td class="fee-rate-amount best">$84.10</td></tr>
+      </tbody></table>
+      <div class="fee-rules-area"><span class="fee-rule-pill required">⚠ VERIFY eligibility before every visit</span><span class="fee-rule-pill warning">92% of 98940 denied — check network status</span></div>
+    </div>
+
+    <div class="fee-payer-card" data-payer="Aetna Better Health KY Medicaid MCO">
+      <div class="fee-payer-header fee-aetnabh"><div><div class="fee-payer-name">Aetna Better Health</div><div class="fee-payer-type">KY Medicaid MCO · Verified</div></div><div class="fee-payer-badge">26 visit limit</div></div>
+      <table class="fee-rate-table"><thead><tr><th>CPT</th><th>Description</th><th>Rate</th></tr></thead><tbody>
+        <tr class="fee-section-row"><td colspan="3">CMT</td></tr>
+        <tr><td><span class="fee-cpt-code">98940</span></td><td class="fee-cpt-desc">CMT 1-2 regions</td><td class="fee-rate-amount">$16.54</td></tr>
+        <tr><td><span class="fee-cpt-code">98941</span></td><td class="fee-cpt-desc">CMT 3-4 regions</td><td class="fee-rate-amount">$21.16</td></tr>
+        <tr><td><span class="fee-cpt-code">98942</span></td><td class="fee-cpt-desc">CMT 5 regions</td><td class="fee-rate-amount">$26.22</td></tr>
+        <tr><td><span class="fee-cpt-code">98943</span></td><td class="fee-cpt-desc">CMT extraspinal</td><td class="fee-rate-amount">$15.39</td></tr>
+        <tr class="fee-section-row"><td colspan="3">Therapy</td></tr>
+        <tr><td><span class="fee-cpt-code">97110</span></td><td class="fee-cpt-desc">Therapeutic Exercise</td><td class="fee-rate-amount">$16.72</td></tr>
+        <tr><td><span class="fee-cpt-code">97140</span></td><td class="fee-cpt-desc">Manual Therapy</td><td class="fee-rate-amount">$14.02</td></tr>
+      </tbody></table>
+      <div class="fee-rules-area"><span class="fee-rule-pill required">❌ 97112 denied 11/11 — use 97110</span><span class="fee-rule-pill covered">✓ 98943 covered $15.39</span><span class="fee-rule-pill required">AT + GP modifiers</span></div>
+    </div>
+
+    <div class="fee-payer-card" data-payer="Wellcare Medicaid">
+      <div class="fee-payer-header fee-wellcare"><div><div class="fee-payer-name">Wellcare MEDICAID</div><div class="fee-payer-type">PAR · In-Network · Verified</div></div><div class="fee-payer-badge">Auth req'd for therapy</div></div>
+      <table class="fee-rate-table"><thead><tr><th>CPT</th><th>Description</th><th>Rate</th></tr></thead><tbody>
+        <tr class="fee-section-row"><td colspan="3">CMT</td></tr>
+        <tr><td><span class="fee-cpt-code">98940</span></td><td class="fee-cpt-desc">CMT 1-2 regions</td><td class="fee-rate-amount">$16.54</td></tr>
+        <tr><td><span class="fee-cpt-code">98941</span></td><td class="fee-cpt-desc">CMT 3-4 regions</td><td class="fee-rate-amount">$21.16</td></tr>
+        <tr><td><span class="fee-cpt-code">98942</span></td><td class="fee-cpt-desc">CMT 5 regions</td><td class="fee-rate-amount">$26.22</td></tr>
+        <tr class="fee-section-row"><td colspan="3">Therapy — AUTH REQUIRED</td></tr>
+        <tr><td><span class="fee-cpt-code">97530</span></td><td class="fee-cpt-desc">Therapeutic Activities</td><td class="fee-rate-amount">$17.29</td></tr>
+        <tr><td><span class="fee-cpt-code">97110</span></td><td class="fee-cpt-desc">Therapeutic Exercise</td><td class="fee-rate-amount">$16.72</td></tr>
+        <tr><td><span class="fee-cpt-code">97140</span></td><td class="fee-cpt-desc">Manual Therapy</td><td class="fee-rate-amount">$14.02</td></tr>
+        <tr class="fee-section-row"><td colspan="3">E/M</td></tr>
+        <tr><td><span class="fee-cpt-code">99213</span></td><td class="fee-cpt-desc">E/M Est. +25</td><td class="fee-rate-amount">$34.10</td></tr>
+        <tr><td><span class="fee-cpt-code">99214</span></td><td class="fee-cpt-desc">E/M Mod. +25</td><td class="fee-rate-amount">$53.68</td></tr>
+      </tbody></table>
+      <div class="fee-rules-area"><span class="fee-rule-pill covered">✓ PAR — we are in-network</span><span class="fee-rule-pill required">AT modifier on ALL CMT</span><span class="fee-rule-pill required">GP + prior auth on therapy</span><span class="fee-rule-pill warning">⚠ 4% cut Aug 1</span></div>
+    </div>
+
+    <div class="fee-payer-card investigate" data-payer="Wellcare HMO Medicare Advantage">
+      <div class="fee-investigate-banner">🚫 NON-PAR — WE ARE NOT IN-NETWORK — DO NOT BILL WITH ASSIGNMENT</div>
+      <div class="fee-payer-header fee-wellcare-hmo"><div><div class="fee-payer-name">Wellcare HMO / Medicare Advantage</div><div class="fee-payer-type">NON-PAR — Verify at check-in</div></div><div class="fee-payer-badge danger-badge">Non-Assignment Required</div></div>
+      <table class="fee-rate-table"><thead><tr><th>CPT</th><th>Description</th><th>Rate</th></tr></thead><tbody>
+        <tr class="fee-section-row"><td colspan="3">We should NOT be billing this plan under normal circumstances</td></tr>
+        <tr><td colspan="2" class="fee-cpt-desc" style="padding:10px 12px;color:#EF4444;font-weight:600">❌ Verify patient is NOT this plan before scheduling</td><td class="fee-rate-amount na"></td></tr>
+      </tbody></table>
+      <div class="fee-rules-area">
+        <span class="fee-rule-pill required">🚨 Non-Assignment of Benefits form REQUIRED before first visit</span>
+        <span class="fee-rule-pill required">Box 27 = NO</span>
+        <span class="fee-rule-pill required">Collect from patient — payment goes to PATIENT</span>
+        <span class="fee-rule-pill warning">Confirm plan type (Medicaid vs HMO) at every new Wellcare patient intake</span>
+      </div>
+    </div>
+
+    <div class="fee-payer-card" data-payer="Molina Passport KY Medicaid MCO">
+      <div class="fee-payer-header fee-molina"><div><div class="fee-payer-name">Molina / Passport</div><div class="fee-payer-type">KY Medicaid MCO · Verified</div></div><div class="fee-payer-badge">26 visit limit</div></div>
+      <table class="fee-rate-table"><thead><tr><th>CPT</th><th>Description</th><th>Rate</th></tr></thead><tbody>
+        <tr class="fee-section-row"><td colspan="3">CMT</td></tr>
+        <tr><td><span class="fee-cpt-code">98940</span></td><td class="fee-cpt-desc">CMT 1-2 regions</td><td class="fee-rate-amount">$20.68</td></tr>
+        <tr><td><span class="fee-cpt-code">98941</span></td><td class="fee-cpt-desc">CMT 3-4 regions</td><td class="fee-rate-amount">$26.45</td></tr>
+        <tr><td><span class="fee-cpt-code">98942</span></td><td class="fee-cpt-desc">CMT 5 regions</td><td class="fee-rate-amount">$32.78</td></tr>
+        <tr><td><span class="fee-cpt-code">98943</span></td><td class="fee-cpt-desc">CMT extraspinal</td><td class="fee-rate-amount">$19.24</td></tr>
+        <tr class="fee-section-row"><td colspan="3">Therapy</td></tr>
+        <tr><td><span class="fee-cpt-code">97530</span></td><td class="fee-cpt-desc">Therapeutic Activities</td><td class="fee-rate-amount">$21.61</td></tr>
+        <tr><td><span class="fee-cpt-code">97110</span></td><td class="fee-cpt-desc">Therapeutic Exercise</td><td class="fee-rate-amount">$20.90</td></tr>
+        <tr><td><span class="fee-cpt-code">97140</span></td><td class="fee-cpt-desc">Manual Therapy</td><td class="fee-rate-amount">$17.52</td></tr>
+        <tr class="fee-section-row"><td colspan="3">E/M</td></tr>
+        <tr><td><span class="fee-cpt-code">99213</span></td><td class="fee-cpt-desc">E/M Est. +25</td><td class="fee-rate-amount">$42.63</td></tr>
+        <tr><td><span class="fee-cpt-code">99214</span></td><td class="fee-cpt-desc">E/M Mod. +25</td><td class="fee-rate-amount">$67.10</td></tr>
+      </tbody></table>
+      <div class="fee-rules-area"><span class="fee-rule-pill covered">✓ 98943 covered $19.24</span><span class="fee-rule-pill required">AT + GP modifiers</span><span class="fee-rule-pill warning">26 visit limit · 4% cut Aug 1</span></div>
+    </div>
+
+    <div class="fee-payer-card" data-payer="VA CCN Region 2 Optum">
+      <div class="fee-payer-header fee-vaccn"><div><div class="fee-payer-name">VA CCN Region 2 Optum</div><div class="fee-payer-type">Verified — pays ABOVE fee schedule</div></div><div class="fee-payer-badge">Best overall rates</div></div>
+      <table class="fee-rate-table"><thead><tr><th>CPT</th><th>Description</th><th>Rate</th></tr></thead><tbody>
+        <tr class="fee-section-row"><td colspan="3">CMT — verified higher than published</td></tr>
+        <tr><td><span class="fee-cpt-code">98940</span></td><td class="fee-cpt-desc">CMT 1-2 regions</td><td class="fee-rate-amount best">$25.43</td></tr>
+        <tr><td><span class="fee-cpt-code">98941</span></td><td class="fee-cpt-desc">CMT 3-4 regions</td><td class="fee-rate-amount best">$36.71</td></tr>
+        <tr><td><span class="fee-cpt-code">98942</span></td><td class="fee-cpt-desc">CMT 5 regions</td><td class="fee-rate-amount best">$47.74</td></tr>
+        <tr><td><span class="fee-cpt-code">98943</span></td><td class="fee-cpt-desc">CMT extraspinal</td><td class="fee-rate-amount best">$23.41</td></tr>
+        <tr class="fee-section-row"><td colspan="3">Therapy</td></tr>
+        <tr><td><span class="fee-cpt-code">97530</span></td><td class="fee-cpt-desc">Therapeutic Activities</td><td class="fee-rate-amount">$33.24</td></tr>
+        <tr><td><span class="fee-cpt-code">97110</span></td><td class="fee-cpt-desc">Therapeutic Exercise</td><td class="fee-rate-amount">$28.00</td></tr>
+        <tr><td><span class="fee-cpt-code">97112</span></td><td class="fee-cpt-desc">Neuromuscular Reeduc.</td><td class="fee-rate-amount">$31.14</td></tr>
+        <tr class="fee-section-row"><td colspan="3">E/M</td></tr>
+        <tr><td><span class="fee-cpt-code">99213</span></td><td class="fee-cpt-desc">E/M Est. +25</td><td class="fee-rate-amount best">$63.31</td></tr>
+        <tr><td><span class="fee-cpt-code">99214</span></td><td class="fee-cpt-desc">E/M Mod. +25</td><td class="fee-rate-amount best">$93.23</td></tr>
+      </tbody></table>
+      <div class="fee-rules-area"><span class="fee-rule-pill required">Prior auth BEFORE first visit</span><span class="fee-rule-pill covered">✓ 98943 best rate of all payers</span><span class="fee-rule-pill covered">✓ 97112 covered $31.14</span></div>
+    </div>
+
+    <div class="fee-payer-card investigate" data-payer="KY Medicaid Fee for Service FFS">
+      <div class="fee-investigate-banner">⚠ INVESTIGATE — 80% denial rate</div>
+      <div class="fee-payer-header fee-medicaid"><div><div class="fee-payer-name">KY Medicaid (Fee for Service)</div><div class="fee-payer-type">Verify Per-Patient</div></div><div class="fee-payer-badge danger-badge">High denial rate</div></div>
+      <table class="fee-rate-table"><thead><tr><th>CPT</th><th>Description</th><th>Rate</th></tr></thead><tbody>
+        <tr class="fee-section-row"><td colspan="3">CMT — verify eligibility first</td></tr>
+        <tr><td><span class="fee-cpt-code">98940</span></td><td class="fee-cpt-desc">CMT 1-2 regions</td><td class="fee-rate-amount low">$0.75 avg*</td></tr>
+        <tr><td><span class="fee-cpt-code">98941</span></td><td class="fee-cpt-desc">CMT 3-4 regions</td><td class="fee-rate-amount">$26.45</td></tr>
+        <tr><td><span class="fee-cpt-code">98942</span></td><td class="fee-cpt-desc">CMT 5 regions</td><td class="fee-rate-amount">$32.78</td></tr>
+        <tr class="fee-section-row"><td colspan="3">Therapy — denied 10/10 in sample</td></tr>
+        <tr><td><span class="fee-cpt-code">97110</span></td><td class="fee-cpt-desc">Therapeutic Exercise</td><td class="fee-rate-amount">$20.90 sched.</td></tr>
+      </tbody></table>
+      <div class="fee-rules-area"><span class="fee-rule-pill required">⚠ VERIFY eligibility before every visit</span><span class="fee-rule-pill warning">Patient may need MCO enrollment instead of FFS</span></div>
+    </div>
+
+    <div class="fee-payer-card investigate" data-payer="Humana">
+      <div class="fee-investigate-banner">⚠ INVESTIGATE — 84% denial rate on CMT</div>
+      <div class="fee-payer-header fee-humana"><div><div class="fee-payer-name">Humana</div><div class="fee-payer-type">Verify Per-Patient</div></div><div class="fee-payer-badge danger-badge">High denial rate</div></div>
+      <table class="fee-rate-table"><thead><tr><th>CPT</th><th>Description</th><th>Rate</th></tr></thead><tbody>
+        <tr class="fee-section-row"><td colspan="3">CMT — verify auth/eligibility first</td></tr>
+        <tr><td><span class="fee-cpt-code">98940</span></td><td class="fee-cpt-desc">CMT 1-2 regions</td><td class="fee-rate-amount low">$12.47 avg*</td></tr>
+        <tr><td><span class="fee-cpt-code">98941</span></td><td class="fee-cpt-desc">CMT 3-4 regions</td><td class="fee-rate-amount">$34.43</td></tr>
+        <tr><td><span class="fee-cpt-code">98942</span></td><td class="fee-cpt-desc">CMT 5 regions</td><td class="fee-rate-amount">$32.78</td></tr>
+        <tr><td><span class="fee-cpt-code">98943</span></td><td class="fee-cpt-desc">CMT extraspinal</td><td class="fee-rate-amount na">Denied 11/11</td></tr>
+        <tr class="fee-section-row"><td colspan="3">Therapy — mostly denied</td></tr>
+        <tr><td><span class="fee-cpt-code">97110</span></td><td class="fee-cpt-desc">Therapeutic Exercise</td><td class="fee-rate-amount low">$3.30 avg*</td></tr>
+      </tbody></table>
+      <div class="fee-rules-area"><span class="fee-rule-pill required">⚠ VERIFY chiro benefit + auth EVERY visit</span><span class="fee-rule-pill required">❌ 98943 never covered</span></div>
+    </div>
+
+    <div class="fee-payer-card" data-payer="Anthem Medicare Advantage">
+      <div class="fee-payer-header fee-anthem-ma"><div><div class="fee-payer-name">Anthem Medicare Advantage</div><div class="fee-payer-type">NON-PAR · Collect at visit</div></div><div class="fee-payer-badge">⚠ Non-par</div></div>
+      <table class="fee-rate-table"><thead><tr><th>CPT</th><th>Description</th><th>Rate</th></tr></thead><tbody>
+        <tr class="fee-section-row"><td colspan="3">CMT — Medicare rate (non-par)</td></tr>
+        <tr><td><span class="fee-cpt-code">98940</span></td><td class="fee-cpt-desc">CMT 1-2 regions</td><td class="fee-rate-amount">$20.68</td></tr>
+        <tr><td><span class="fee-cpt-code">98941</span></td><td class="fee-cpt-desc">CMT 3-4 regions</td><td class="fee-rate-amount">$26.45</td></tr>
+        <tr><td><span class="fee-cpt-code">98942</span></td><td class="fee-cpt-desc">CMT 5 regions</td><td class="fee-rate-amount">$32.78</td></tr>
+        <tr class="fee-section-row"><td colspan="3">Therapy &amp; E/M</td></tr>
+        <tr><td colspan="2" class="fee-cpt-desc" style="padding:8px 12px;color:#EF4444;font-weight:500">❌ Not covered — bill patient directly</td><td class="fee-rate-amount na">N/A</td></tr>
+      </tbody></table>
+      <div class="fee-rules-area"><span class="fee-rule-pill required">COLLECT FROM PATIENT at visit</span><span class="fee-rule-pill required">Box 27 = NO</span></div>
+    </div>
+
+  </div>
+
+  <div class="fee-quick-rules">
+    <div class="fee-quick-rules-title">⚡ Quick Rules — Verified From Real Claims</div>
+    <div class="fee-rules-grid">
+      <div class="fee-rule-item success"><span class="fee-rule-dot">✓</span><span><strong>98943 Extraspinal CMT IS covered</strong> by BCBS, Aetna BH, Molina, and VA CCN. Do not remove from claims for these payers.</span></div>
+      <div class="fee-rule-item danger"><span class="fee-rule-dot">🚫</span><span><strong>98943 — Humana</strong> denied 11/11 times. Never bill to Humana.</span></div>
+      <div class="fee-rule-item danger"><span class="fee-rule-dot">🚫</span><span><strong>97112</strong> covered by VA CCN only. Denied by Aetna Better Health 11/11 times.</span></div>
+      <div class="fee-rule-item danger"><span class="fee-rule-dot">⚠️</span><span><strong>Aetna Commercial, Humana, KY Medicaid FFS</strong> — same codes pay sometimes, deny other times. CHECK ELIGIBILITY before every visit.</span></div>
+      <div class="fee-rule-item caution"><span class="fee-rule-dot">🔑</span><span><strong>Wellcare Medicaid therapy</strong> covered WITH prior auth only. No auth = CO-197 denial.</span></div>
+      <div class="fee-rule-item danger"><span class="fee-rule-dot">🚨</span><span><strong>Wellcare has TWO products</strong> — Medicaid (PAR, we bill normally) vs HMO/Medicare Advantage (NON-PAR, we should not be billing). VERIFY WHICH ONE at every new patient check-in. Get Non-Assignment of Benefits form signed for any Wellcare HMO patient.</span></div>
+      <div class="fee-rule-item success"><span class="fee-rule-dot">💰</span><span><strong>VA CCN pays best overall</strong> — verified ~35% ABOVE published schedule. 98942=$47.74, 99214=$93.23.</span></div>
+      <div class="fee-rule-item success"><span class="fee-rule-dot">💰</span><span><strong>BCBS 97530</strong> = $67.50, highest therapy rate of any payer.</span></div>
+      <div class="fee-rule-item danger"><span class="fee-rule-dot">🏥</span><span><strong>Anthem Medicare Advantage</strong> — NON-PAR. Collect full payment at time of service.</span></div>
+    </div>
+  </div>
+
+  <div class="fee-footer">
+    Integrity Chiropractic of Mt. Sterling · 113 Maloney Way · 859-762-0009 · mtsterlingchiropractor.com<br>
+    Rates verified against real ERA remittance data, April–July 2026. Red-outlined cards require per-patient investigation.<br>
+    Proprietary contracted rate information — internal use only.
+  </div>
+</div>
+
 <script>
 // ---- LOGO ----
 document.getElementById('clinic-logo').src='data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/wAARCADIAZADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD3+iiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP/Z';
@@ -1239,6 +1498,21 @@ function showPage(id){
   if(id==='page-gfe') { populateGFE(); setTimeout(initSigPad, 50); }
   if(id==='page-ach') populateACH();
   if(id==='page-rof') populateROF();
+}
+
+// ---- FEE SCHEDULE SEARCH ----
+function filterFeeCards(){
+  var q = (document.getElementById('fee-search').value||'').trim().toLowerCase();
+  var cards = document.querySelectorAll('#page-fees .fee-payer-card');
+  var shown = 0;
+  cards.forEach(function(card){
+    var haystack = (card.dataset.payer + ' ' + card.textContent).toLowerCase();
+    var match = !q || haystack.indexOf(q) !== -1;
+    card.classList.toggle('fee-hidden', !match);
+    if(match) shown++;
+  });
+  var countEl = document.getElementById('fee-search-count');
+  if(countEl) countEl.textContent = q ? (shown + ' of ' + cards.length + ' payers') : '';
 }
 
 // ---- SYNC FIELDS ----
