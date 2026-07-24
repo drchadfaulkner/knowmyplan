@@ -255,10 +255,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
           <div>
             <div style="font-size:12.5px;font-weight:600;color:var(--navy)">📄 Staff: Upload Availity Benefits PDF</div>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Auto-fills the fields below using AI. Patient does not see this.</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Auto-fills the fields below using AI. Patient does not see this. You can select multiple PDFs at once (e.g. chiropractic + physical therapy pages).</div>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
-            <input type="file" id="availity-pdf-input" accept="application/pdf" style="display:none" onchange="handleAvailityUpload(this)">
+            <input type="file" id="availity-pdf-input" accept="application/pdf" multiple style="display:none" onchange="handleAvailityUpload(this)">
             <button type="button" onclick="document.getElementById('availity-pdf-input').click()" style="font-size:11.5px;padding:7px 14px;background:#FFA500;color:white;border:none;border-radius:5px;cursor:pointer;font-weight:600;">Choose PDF</button>
           </div>
         </div>
@@ -1859,62 +1859,77 @@ function namesLooselyMatch(a, b){
 }
 
 function handleAvailityUpload(input){
-  var file = input.files && input.files[0];
-  if(!file) return;
-  if(file.type !== 'application/pdf'){
-    document.getElementById('availity-status').textContent = '❌ Please upload a PDF file.';
-    return;
-  }
-  var statusEl = document.getElementById('availity-status');
-  statusEl.textContent = '⏳ Reading PDF and extracting benefits with AI… this may take 10-20 seconds.';
+  var files = input.files ? Array.prototype.slice.call(input.files) : [];
+  if(!files.length) return;
 
-  var reader = new FileReader();
-  reader.onload = function(){
-    var base64 = reader.result.split(',')[1]; // strip data:application/pdf;base64, prefix
+  var statusEl = document.getElementById('availity-status');
+
+  for (var i = 0; i < files.length; i++){
+    if(files[i].type !== 'application/pdf'){
+      statusEl.textContent = '❌ Please upload PDF files only.';
+      return;
+    }
+  }
+
+  statusEl.textContent = files.length > 1
+    ? '⏳ Reading ' + files.length + ' PDFs and extracting benefits with AI… this may take 15-30 seconds.'
+    : '⏳ Reading PDF and extracting benefits with AI… this may take 10-20 seconds.';
+
+  var readPromises = files.map(function(file){
+    return new Promise(function(resolve, reject){
+      var reader = new FileReader();
+      reader.onload = function(){
+        resolve(reader.result.split(',')[1]); // strip data:application/pdf;base64, prefix
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  });
+
+  Promise.all(readPromises).then(function(base64Array){
     var patientNameHint = (document.getElementById('pt-name').value || '').trim();
 
-    fetch(SCRIPT_URL, {
+    return fetch(SCRIPT_URL, {
       method: 'POST',
-      body: JSON.stringify({ action: 'extractBenefits', pdfBase64: base64, patientNameHint: patientNameHint })
-    })
-    .then(function(r){ return r.json(); })
-    .then(function(result){
-      if(result.error){
-        statusEl.textContent = '❌ Extraction failed: ' + result.error;
-        console.error(result);
+      body: JSON.stringify({ action: 'extractBenefits', pdfBase64Array: base64Array, patientNameHint: patientNameHint })
+    });
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(result){
+    if(result.error){
+      statusEl.textContent = '❌ Extraction failed: ' + result.error;
+      console.error(result);
+      return;
+    }
+    var typedName = (document.getElementById('pt-name').value || '').trim();
+    var pdfName = (result.data && result.data.patientName || '').trim();
+    if(typedName && pdfName && !namesLooselyMatch(typedName, pdfName)){
+      var proceed = confirm(
+        '⚠️ Name mismatch!\n\n'
+        + 'Patient field says: "' + typedName + '"\n'
+        + 'PDF benefits are for: "' + pdfName + '"\n\n'
+        + 'This PDF may belong to a different patient. Click OK to apply this data anyway, or Cancel to stop and check the file.'
+      );
+      if(!proceed){
+        statusEl.textContent = '❌ Cancelled — name mismatch (typed: "'+typedName+'", PDF: "'+pdfName+'"). No data was applied.';
         return;
       }
-      var typedName = (document.getElementById('pt-name').value || '').trim();
-      var pdfName = (result.data && result.data.patientName || '').trim();
-      if(typedName && pdfName && !namesLooselyMatch(typedName, pdfName)){
-        var proceed = confirm(
-          '⚠️ Name mismatch!\n\n'
-          + 'Patient field says: "' + typedName + '"\n'
-          + 'PDF benefits are for: "' + pdfName + '"\n\n'
-          + 'This PDF may belong to a different patient. Click OK to apply this data anyway, or Cancel to stop and check the file.'
-        );
-        if(!proceed){
-          statusEl.textContent = '❌ Cancelled — name mismatch (typed: "'+typedName+'", PDF: "'+pdfName+'"). No data was applied.';
-          return;
-        }
-        statusEl.textContent = '⚠️ Proceeding despite name mismatch — please double-check this record.';
-      }
-      applyExtractedBenefits(result.data);
-      var missingIns = [];
-      if(result.data.deductibleTotal == null) missingIns.push('Deductible');
-      if(result.data.coinsurancePct == null && result.data.copayDollar == null) missingIns.push('Co-insurance/Co-pay');
-      if(result.data.visitLimit == null) missingIns.push('Visit Limit');
-      statusEl.textContent = missingIns.length
-        ? '⚠️ Benefits applied — still needs: ' + missingIns.join(', ') + '. Please verify manually.'
-        : '✅ Benefits extracted and applied — review fields below before saving.';
-      finalizeBenefitsCompletion(result.data);
-    })
-    .catch(function(err){
-      statusEl.textContent = '❌ Could not reach extraction service. Check connection.';
-      console.error(err);
-    });
-  };
-  reader.readAsDataURL(file);
+      statusEl.textContent = '⚠️ Proceeding despite name mismatch — please double-check this record.';
+    }
+    applyExtractedBenefits(result.data);
+    var missingIns = [];
+    if(result.data.deductibleTotal == null) missingIns.push('Deductible');
+    if(result.data.coinsurancePct == null && result.data.copayDollar == null) missingIns.push('Chiro Co-insurance/Co-pay');
+    if(result.data.visitLimit == null) missingIns.push('Chiro Visit Limit');
+    statusEl.textContent = missingIns.length
+      ? '⚠️ Benefits applied — still needs: ' + missingIns.join(', ') + '. Please verify manually.'
+      : '✅ Benefits extracted and applied — review fields below before saving.';
+    finalizeBenefitsCompletion(result.data);
+  })
+  .catch(function(err){
+    statusEl.textContent = '❌ Could not reach extraction service. Check connection.';
+    console.error(err);
+  });
 }
 
 function finalizeBenefitsCompletion(extractedData){
@@ -1983,7 +1998,27 @@ function applyExtractedBenefits(d){
   if(d.coinsurancePct != null) document.getElementById('copay-pct').value = d.coinsurancePct;
   if(d.copayDollar != null) document.getElementById('copay-dollar').value = d.copayDollar;
   if(d.visitLimit != null) document.getElementById('chiro-visit-limit').value = d.visitLimit;
-  if(d.notes) document.getElementById('ins-notes').value = d.notes;
+  var notesParts = [];
+  if(d.notes) notesParts.push(d.notes);
+  if(d.physicalTherapy && (d.physicalTherapy.coinsurancePct != null || d.physicalTherapy.copayDollar != null || d.physicalTherapy.visitLimit != null || d.physicalTherapy.visitsRemaining != null)){
+    var pt = d.physicalTherapy;
+    var ptBits = [];
+    if(pt.coinsurancePct != null) ptBits.push(pt.coinsurancePct + '% co-insurance');
+    if(pt.copayDollar != null) ptBits.push('$' + pt.copayDollar + ' copay');
+    if(pt.visitLimit != null) ptBits.push(pt.visitLimit + ' visit/yr limit');
+    if(pt.visitsRemaining != null) ptBits.push(pt.visitsRemaining + ' remaining');
+    notesParts.push('PT benefits: ' + ptBits.join(', ') + '.');
+  }
+  if(d.dme && (d.dme.covered != null || d.dme.coinsurancePct != null || d.dme.notes)){
+    var dmeBits = [];
+    if(d.dme.covered === true) dmeBits.push('covered');
+    if(d.dme.covered === false) dmeBits.push('not covered');
+    if(d.dme.coinsurancePct != null) dmeBits.push(d.dme.coinsurancePct + '% co-insurance');
+    if(d.dme.notes) dmeBits.push(d.dme.notes);
+    notesParts.push('DME: ' + dmeBits.join(', ') + '.');
+  }
+  if(d.visitsRemaining != null) notesParts.push('Chiro visits remaining: ' + d.visitsRemaining + '.');
+  if(notesParts.length) document.getElementById('ins-notes').value = notesParts.join(' ');
 
   if(d.therapyCodesCovered === true || d.therapyCodesCovered === false){
     var val = d.therapyCodesCovered ? 'yes' : 'no';
