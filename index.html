@@ -335,10 +335,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
           <label>Insurance Carrier</label>
           <select id="carrier-select" onchange="onCarrierChange()" style="font-size:13px;font-weight:500">
             <option value="">— Select carrier —</option>
-            <option value="anthem">Anthem BCBS</option>
-            <option value="aetna">Aetna</option>
+            <option value="anthem">Anthem BCBS Commercial</option>
+            <option value="aetna">Aetna Commercial</option>
+            <option value="aetna_bh">Aetna Better Health (KY Medicaid)</option>
+            <option value="wellcare_medicaid">Wellcare Medicaid</option>
+            <option value="molina">Molina / Passport (KY Medicaid)</option>
+            <option value="medicaid_ffs">KY Medicaid — Fee for Service</option>
+            <option value="va_ccn">VA CCN Region 2 (Optum)</option>
             <option value="medicare">Medicare (KY)</option>
             <option value="uhc">UHC / United Healthcare</option>
+            <option value="humana">Humana Healthy Horizons — NOT ACCEPTED</option>
+            <option value="wellcare_hmo">Wellcare HMO / Medicare Advantage — NOT ACCEPTED</option>
+            <option value="anthem_ma">Anthem Medicare Advantage — NOT ACCEPTED</option>
             <option value="other">Other / Out-of-Network</option>
           </select>
         </div>
@@ -441,7 +449,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 
   <div class="action-bar">
-    <button class="btn btn-primary" onclick="showPage('page-plan')">Next: Build Care Plan →</button>
+    <button class="btn btn-primary" id="ins-next-btn" onclick="showPage('page-plan')">Next: Build Care Plan →</button>
   </div>
 </div>
 
@@ -1489,6 +1497,10 @@ setTimeout(initSigPad, 300);
 
 // ---- TABS ----
 function showPage(id){
+  if(id==='page-plan' && typeof isBlockedCarrier==='function' && isBlockedCarrier()){
+    alert('This plan is not accepted — the patient cannot be seen under normal billing. See the red notice on the Insurance Verification page.');
+    return;
+  }
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   document.querySelectorAll('.tab-btn').forEach((b,i)=>{
@@ -1570,17 +1582,40 @@ function fmt(n){return'$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
 // ---- CALCULATE ----
 // ── FEE SCHEDULES ────────────────────────────────────────────────────────
 var FEE = {
+  // Verified against 175+ real ERA remittance files, Apr–Jul 2026.
   anthem: {
     '97032':10.07,'97010':3.89,'97110':22.00,'97112':22.00,'97140':20.50,
-    '97530':18.37,'97012':10.84,'98940':33.34,'98941':35.50,'98942':37.28,
+    '97530':67.50,'97012':10.84,'98940':33.34,'98941':35.18,
+    // 98942 NOTE: verified $86.74 rate applies to Medicare-Advantage-crossover claims only —
+    // NOT the standard commercial allowable. Kept at prior estimate until crossover detection exists.
+    '98942':37.28,
     '98943':16.88,'99213':39.20,'99214':58.46,'99204':94.71,'99205':119.56,
     '72040':33.65,'72050':48.43
   },
-  aetna: {
+  aetna: { // Aetna Commercial — ⚠ investigate: 92% denial rate observed on 98940
     '97032':10.28,'97010':3.00,'97110':17.86,'97112':18.23,'97140':16.45,
-    '97530':18.37,'97012':9.19,'98940':21.29,'98941':28.29,'98942':35.30,
-    '98943':19.68,'99213':39.20,'99214':58.46,'99204':94.71,'99205':119.56,
+    '97530':18.37,'97012':9.19,'98940':6.29,'98941':28.29,'98942':35.30,
+    '98943':15.39,'99213':56.95,'99214':84.10,'99204':94.71,'99205':119.56,
     '72040':27.92,'72050':39.52
+  },
+  aetna_bh: { // Aetna Better Health — KY Medicaid MCO, in-network, $0 patient responsibility, 26 visit limit
+    '98940':16.54,'98941':21.16,'98942':26.22,'98943':15.39,
+    '97110':16.72,'97140':14.02
+  },
+  wellcare_medicaid: { // Wellcare Medicaid — KY Medicaid MCO, in-network, $0 patient responsibility. Auth required for therapy.
+    '98940':16.54,'98941':21.16,'98942':26.22,
+    '97530':17.29,'97110':16.72,'97140':14.02,'99213':34.10,'99214':53.68
+  },
+  molina: { // Molina / Passport — KY Medicaid MCO, in-network, $0 patient responsibility, 26 visit limit
+    '98940':20.68,'98941':26.45,'98942':32.78,'98943':19.24,
+    '97530':21.61,'97110':20.90,'97140':17.52,'99213':42.63,'99214':67.10
+  },
+  va_ccn: { // VA CCN Region 2 (Optum) — verified paying ~35% above published schedule. Prior auth required before first visit.
+    '98940':25.43,'98941':36.71,'98942':47.74,'98943':23.41,
+    '97530':33.24,'97110':28.00,'97112':31.14,'99213':63.31,'99214':93.23
+  },
+  medicaid_ffs: { // KY Medicaid Fee-for-Service — ⚠ investigate: 80% denial rate; confirm patient isn't actually MCO-enrolled
+    '98940':0.75,'98941':26.45,'98942':32.78,'97110':20.90
   },
   medicare: {
     '97032':13.49,'97010':5.64,'97110':27.05,'97112':30.09,'97140':25.55,
@@ -1603,28 +1638,64 @@ function setPatientType(type){
   document.getElementById('toggle-ins').style.color = !isCash ? 'white' : 'var(--text-muted)';
   document.getElementById('carrier-row').style.display = isCash ? 'none' : 'block';
   if(isCash){ window._carrier = 'cash'; updateCarrierNote(); }
+  updateInsNextButton();
   calcSummary();
 }
 
 function onCarrierChange(){
   window._carrier = document.getElementById('carrier-select').value || '';
   updateCarrierNote();
+  updateInsNextButton();
   calcSummary();
+}
+
+// Carriers we are NOT in-network with and do not see patients for under normal billing.
+var BLOCKED_CARRIERS = ['humana','wellcare_hmo','anthem_ma'];
+// KY Medicaid MCOs / VA CCN — in-network, $0 patient responsibility, insurance pays the verified allowable.
+var ZERO_PT_CARRIERS = ['aetna_bh','wellcare_medicaid','molina','va_ccn'];
+// Carriers with a visible per-visit cap we should warn about.
+var VISIT_LIMIT_26 = ['aetna_bh','wellcare_medicaid','molina'];
+
+function isBlockedCarrier(){ return BLOCKED_CARRIERS.indexOf(window._carrier) !== -1; }
+function isMedicaidZero(){ return ZERO_PT_CARRIERS.indexOf(window._carrier) !== -1; }
+
+function updateInsNextButton(){
+  var btn = document.getElementById('ins-next-btn');
+  if(!btn) return;
+  if(isBlockedCarrier()){
+    btn.disabled = true;
+    btn.textContent = '🚫 Patient Not Accepted — Cannot Proceed';
+    btn.style.background = '#8A93A3';
+    btn.style.cursor = 'not-allowed';
+  } else {
+    btn.disabled = false;
+    btn.textContent = 'Next: Build Care Plan →';
+    btn.style.background = '';
+    btn.style.cursor = '';
+  }
 }
 
 function updateCarrierNote(){
   var note = document.getElementById('carrier-note');
   var c = window._carrier;
   var msgs = {
-    anthem: {cls:'#EEF3FA',border:'#2C3E5A',color:'#1A2535', txt:'✅ Anthem BCBS — In-network. Co-insurance applies to Anthem allowable. Insurance pays Integrity directly.'},
-    aetna:  {cls:'#EEF3FA',border:'#2C3E5A',color:'#1A2535', txt:'✅ Aetna — In-network. Co-insurance applies to Aetna allowable. Insurance pays Integrity directly.'},
+    anthem: {cls:'#EEF3FA',border:'#2C3E5A',color:'#1A2535', txt:'✅ Anthem BCBS Commercial — In-network. Co-insurance applies to Anthem allowable. Insurance pays Integrity directly.'},
+    aetna:  {cls:'#FFF8EE',border:'#C9A84C',color:'#6B5200', txt:'⚠️ Aetna Commercial — INVESTIGATE: 92% denial rate observed on 98940. Still in-network — co-insurance applies to Aetna allowable per the Fee Schedule tab — but verify eligibility before every visit.'},
+    aetna_bh:{cls:'#EAF7EF',border:'#10B981',color:'#065F46', txt:'✅ Aetna Better Health (KY Medicaid MCO) — In-network. Medicaid patient — $0 patient responsibility, do not collect co-pay/co-insurance. 26 visit/year limit. AT + GP modifiers required. 97112 is denied 11/11 — use 97110 instead.'},
+    wellcare_medicaid:{cls:'#EAF7EF',border:'#10B981',color:'#065F46', txt:'✅ Wellcare Medicaid — In-network (PAR). Medicaid patient — $0 patient responsibility. 26 visit/year limit. AT modifier required on all CMT; therapy requires prior auth (GP modifier) or it denies. Rates drop 4% Aug 1, 2026.'},
+    molina: {cls:'#EAF7EF',border:'#10B981',color:'#065F46', txt:'✅ Molina / Passport (KY Medicaid MCO) — In-network. Medicaid patient — $0 patient responsibility. 26 visit/year limit. AT + GP modifiers required. Rates drop 4% Aug 1, 2026.'},
+    va_ccn: {cls:'#EAF7EF',border:'#10B981',color:'#065F46', txt:'✅ VA CCN Region 2 (Optum) — Verified paying ~35% ABOVE published schedule, best overall rates. Prior authorization REQUIRED before first visit. Assuming $0 patient responsibility under VA authorization — confirm before scheduling.'},
+    medicaid_ffs:{cls:'#FFF8EE',border:'#C9A84C',color:'#6B5200', txt:'⚠️ KY Medicaid Fee-for-Service — INVESTIGATE: 80% denial rate, therapy denied 10/10 in sample. Confirm the patient is not actually enrolled in an MCO (Molina, Wellcare, Aetna Better Health) before billing FFS. Verify eligibility every visit.'},
     medicare:{cls:'#FFF8EE',border:'#C9A84C',color:'#6B5200', txt:'⚠️ Medicare — Non-assignment. Patient pays $78/visit at time of service. We bill Medicare on your behalf; Medicare reimburses the patient directly for the adjustment only.'},
     uhc:    {cls:'#FFF8EE',border:'#C9A84C',color:'#6B5200', txt:'⚠️ UHC / United Healthcare — Non-assignment. Patient pays $78/visit at time of service. We bill UHC on your behalf; UHC reimburses the patient a flat $45.'},
+    humana: {cls:'#FDE8E8',border:'#EF4444',color:'#7F1D1D', txt:'🚫 Humana Healthy Horizons (Medicaid) — WE DO NOT ACCEPT THIS PLAN. This patient cannot be seen under normal billing. Do not schedule.'},
+    wellcare_hmo:{cls:'#FDE8E8',border:'#EF4444',color:'#7F1D1D', txt:'🚫 Wellcare HMO / Medicare Advantage — NON-PAR, not accepted. This patient cannot be seen under normal billing. A signed Non-Assignment of Benefits form and doctor sign-off would be required before any exception.'},
+    anthem_ma:{cls:'#FDE8E8',border:'#EF4444',color:'#7F1D1D', txt:'🚫 Anthem Medicare Advantage — NON-PAR, not accepted. This patient cannot be seen under normal billing.'},
     other:  {cls:'#FFF8EE',border:'#C9A84C',color:'#6B5200', txt:'ℹ️ Out-of-network / Other carrier — Billed as cash at $78/visit. Patient is responsible for full amount at time of service.'},
     cash:   null
   };
   var m = msgs[c];
-  if(m){ note.style.cssText='display:block;background:'+m.cls+';border:1.5px solid '+m.border+';border-radius:6px;padding:10px 14px;font-size:11.5px;color:'+m.color+';line-height:1.6;margin-top:8px'; note.textContent=m.txt; }
+  if(m){ note.style.cssText='display:block;background:'+m.cls+';border:1.5px solid '+m.border+';border-radius:6px;padding:10px 14px;font-size:11.5px;color:'+m.color+';line-height:1.6;margin-top:8px;font-weight:'+(isBlockedCarrier()?'700':'400'); note.textContent=m.txt; }
   else note.style.display='none';
 }
 
@@ -1635,7 +1706,7 @@ function isCashMode(){
 
 function getRate(code){
   var c=window._carrier;
-  if(c==='anthem'||c==='aetna'||c==='medicare') return FEE[c][code]||0;
+  if(FEE[c]) return FEE[c][code]||0;
   return 0;
 }
 
@@ -1645,6 +1716,99 @@ function calcSummary(){
   var totalVisits=Math.round(pw*wk);
   var carrier=window._carrier;
   var cashMode=isCashMode();
+
+  // ── BLOCKED / NOT ACCEPTED CARRIERS ─────────────────────────────────────
+  if(isBlockedCarrier()){
+    document.getElementById('summary-wrap').style.display='block';
+    document.getElementById('sum-mode-badge').style.display='block';
+    document.getElementById('sum-mode-badge').textContent='🚫 NOT ACCEPTED — Cannot Generate Estimate';
+    document.getElementById('sum-ins-label').textContent='—';
+    document.getElementById('sum-visits').textContent='—';
+    document.getElementById('sum-total').textContent='—';
+    document.getElementById('sum-ins').textContent='—';
+    document.getElementById('sum-pt').textContent='—';
+    document.getElementById('breakdown-rows').innerHTML='<div class="sum-row" style="opacity:.9">🚫 We do not accept this plan under normal billing. Do not build a care plan or estimate for this patient — see the note on the Insurance Verification page.</div>';
+    document.getElementById('nonpar-disclaimer').style.display='none';
+    document.getElementById('sum-note').style.display='none';
+    return;
+  }
+
+  // ── KY MEDICAID MCO / VA CCN — $0 PATIENT RESPONSIBILITY ────────────────
+  if(isMedicaidZero()){
+    var protoOnZ=window._protoOn||false;
+    var emsVisitsZ=protoOnZ?Math.min(totalVisits,12):0;
+    var artQtyZ=protoOnZ?Math.round(totalVisits/2):0;
+
+    var codeMapZ={'CMT – Spinal':'98940','CMT – Non-Spinal':'98943','Therapeutic Exercise':'97110',
+      'Neuromuscular Re-ed.':'97112','Therapeutic Activities':'97530',
+      'Active Release Technique®':'97140','Cervical Extension Traction':'97012'};
+
+    var insTotalZ=0, perVisitLinesZ=[], extraLinesZ=[];
+
+    if(protoOnZ){
+      var emsRateZ=getRate('97032'), exRateZ=getRate('97110')*2, artRateZ=getRate('97140');
+      insTotalZ+=emsRateZ*emsVisitsZ;
+      extraLinesZ.push({name:'EMS / Interferential (97032) — visits 1–'+emsVisitsZ,price:emsRateZ,qty:emsVisitsZ});
+      insTotalZ+=exRateZ*totalVisits;
+      perVisitLinesZ.push({name:'Therapeutic Exercise ×2 units (97110)',price:exRateZ,qty:totalVisits});
+      insTotalZ+=artRateZ*artQtyZ;
+      extraLinesZ.push({name:'Active Release Technique® (97140) — every other visit',price:artRateZ,qty:artQtyZ});
+    }
+    var exam99214RateZ=getRate('99214');
+    insTotalZ+=exam99214RateZ*2;
+    extraLinesZ.push({name:'Re-exam 99214 (mid + end visits)',price:exam99214RateZ,qty:2});
+
+    document.querySelectorAll('.tx-row.active').forEach(function(el){
+      var type=el.dataset.type;
+      var name=el.querySelector('.tx-name').textContent;
+      var code=codeMapZ[name];
+      var rate=code?getRate(code):0;
+      if(!rate){ return; } // codes with no verified rate for this payer aren't billed to a $0-patient Medicaid plan
+      if(type==='pervisit'){
+        insTotalZ+=rate*totalVisits;
+        perVisitLinesZ.push({name,price:rate,qty:totalVisits});
+      } else {
+        var qty=parseInt(el.dataset.qty)||1;
+        insTotalZ+=rate*qty;
+        extraLinesZ.push({name,price:rate,qty});
+      }
+    });
+
+    window._lastCalc={totalVisits,totalBilled:insTotalZ,ptTotal:0,perVisitLines:perVisitLinesZ,extraLines:extraLinesZ,ptDeductible:0,ptCoins:0,copayPct:0,copayDollar:0,afterDed:0,insCoins:insTotalZ,cashMode:false,carrier,heatTotal:0,protoOn:protoOnZ,emsVisits:emsVisitsZ,artQty:artQtyZ};
+
+    var badgeZ=document.getElementById('sum-mode-badge');
+    badgeZ.style.display='block';
+    var carrierLabelZ={aetna_bh:'Aetna Better Health',wellcare_medicaid:'Wellcare Medicaid',molina:'Molina / Passport',va_ccn:'VA CCN Region 2'}[carrier]||carrier;
+    badgeZ.textContent=carrierLabelZ+' — In-Network · $0 Patient Responsibility';
+
+    document.getElementById('sum-ins-label').textContent='Est. Insurance Pays';
+    document.getElementById('sum-visits').textContent=totalVisits+' visits';
+    document.getElementById('sum-total').textContent=fmt(insTotalZ);
+    document.getElementById('sum-ins').textContent=fmt(insTotalZ);
+    document.getElementById('sum-pt').textContent=fmt(0);
+
+    var rowsZ='';
+    if(VISIT_LIMIT_26.indexOf(carrier)!==-1 && totalVisits>26){
+      rowsZ+='<div class="sum-row" style="color:#EF4444;font-weight:600">⚠ '+totalVisits+' visits exceeds the 26 visit/year Medicaid limit — confirm remaining visits before scheduling</div>';
+    }
+    if(perVisitLinesZ.length){
+      rowsZ+='<div class="sum-row" style="opacity:.6;font-size:10px">Per-visit services (verified allowable) ×'+totalVisits+' visits</div>';
+      perVisitLinesZ.forEach(i=>{rowsZ+=`<div class="sum-row"><span>${i.name}</span><span>${fmt(i.price*i.qty)}</span></div>`;});
+    }
+    if(extraLinesZ.length){
+      rowsZ+='<div class="sum-row" style="opacity:.6;font-size:10px;margin-top:6px">Additional / protocol services</div>';
+      extraLinesZ.forEach(i=>{var lbl=i.qty>1?i.name+' ×'+i.qty:i.name;rowsZ+=`<div class="sum-row"><span>${lbl}</span><span>${fmt(i.price*i.qty)}</span></div>`;});
+    }
+    rowsZ+='<div class="sum-row bold" style="margin-top:6px"><span>Patient responsibility (Medicaid — no balance billing)</span><span>$0.00</span></div>';
+    document.getElementById('breakdown-rows').innerHTML=rowsZ;
+
+    document.getElementById('nonpar-disclaimer').style.display='none';
+    var noteElZ=document.getElementById('sum-note');
+    noteElZ.textContent='$0 patient responsibility — Medicaid/VA rules prohibit balance billing. Estimate based on verified allowable rates, not a guarantee of coverage.';
+    noteElZ.style.display='inline-block';
+    document.getElementById('summary-wrap').style.display='block';
+    return;
+  }
 
   // ── CASH / NON-ASSIGNMENT MODE ──────────────────────────────────────────
   if(cashMode){
@@ -1818,7 +1982,8 @@ function calcSummary(){
 
   var badge=document.getElementById('sum-mode-badge');
   badge.style.display='block';
-  badge.textContent=(carrier==='anthem'?'Anthem BCBS':carrier==='aetna'?'Aetna':carrier)+' — Allowable-Based Estimate';
+  var carrierLabel={anthem:'Anthem BCBS Commercial',aetna:'Aetna Commercial ⚠',medicaid_ffs:'KY Medicaid FFS ⚠'}[carrier]||carrier;
+  badge.textContent=carrierLabel+' — Allowable-Based Estimate';
 
   document.getElementById('sum-ins-label').textContent='Est. Insurance Pays';
   document.getElementById('sum-visits').textContent=totalVisits+' visits';
