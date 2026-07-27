@@ -578,7 +578,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
           <div class="tx-right"><span class="tx-price">$45/visit</span></div>
         </div>
         <!-- Shockwave default 12 -->
-        <div class="tx-row" id="tx-shockwave" data-price="50" data-type="qty" data-qty="12" onclick="toggleTx(this)">
+        <div class="tx-row" id="tx-shockwave" data-price="50" data-type="qty" data-qty="12" data-selfpay="1" onclick="toggleTx(this)">
           <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
           <div class="tx-info"><div class="tx-name">Shockwave Therapy</div><div class="tx-code">per treatment</div></div>
           <div class="tx-right">
@@ -591,7 +591,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
           </div>
         </div>
         <!-- Dry Needling default 12 -->
-        <div class="tx-row" id="tx-dryneedle" data-price="50" data-type="qty" data-qty="12" onclick="toggleTx(this)">
+        <div class="tx-row" id="tx-dryneedle" data-price="50" data-type="qty" data-qty="12" data-selfpay="1" onclick="toggleTx(this)">
           <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
           <div class="tx-info"><div class="tx-name">Dry Needling</div><div class="tx-code">per treatment</div></div>
           <div class="tx-right">
@@ -1758,9 +1758,20 @@ function calcSummary(){
     insTotalZ+=exam99214RateZ*2;
     extraLinesZ.push({name:'Re-exam 99214 (mid + end visits)',price:exam99214RateZ,qty:2});
 
+    var selfPayTotalZ=0, selfPayLinesZ=[];
     document.querySelectorAll('.tx-row.active').forEach(function(el){
       var type=el.dataset.type;
       var name=el.querySelector('.tx-name').textContent;
+      // Services insurance/Medicaid never covers (Shockwave, Dry Needling) are always
+      // billed to the patient in full, at whatever quantity is set on the row — even
+      // on $0-patient-responsibility Medicaid/VA plans, since they aren't a covered benefit.
+      if(el.dataset.selfpay==='1'){
+        var priceZ=parseFloat(el.dataset.price)||0;
+        var qtyZ=parseInt(el.dataset.qty)||1;
+        selfPayTotalZ+=priceZ*qtyZ;
+        selfPayLinesZ.push({name,price:priceZ,qty:qtyZ});
+        return;
+      }
       var code=codeMapZ[name];
       var rate=code?getRate(code):0;
       if(!rate){ return; } // codes with no verified rate for this payer aren't billed to a $0-patient Medicaid plan
@@ -1774,7 +1785,7 @@ function calcSummary(){
       }
     });
 
-    window._lastCalc={totalVisits,totalBilled:insTotalZ,ptTotal:0,perVisitLines:perVisitLinesZ,extraLines:extraLinesZ,ptDeductible:0,ptCoins:0,copayPct:0,copayDollar:0,afterDed:0,insCoins:insTotalZ,cashMode:false,carrier,heatTotal:0,protoOn:protoOnZ,emsVisits:emsVisitsZ,artQty:artQtyZ};
+    window._lastCalc={totalVisits,totalBilled:insTotalZ+selfPayTotalZ,ptTotal:selfPayTotalZ,perVisitLines:perVisitLinesZ,extraLines:extraLinesZ,selfPayLines:selfPayLinesZ,ptDeductible:0,ptCoins:0,copayPct:0,copayDollar:0,afterDed:0,insCoins:insTotalZ,cashMode:false,carrier,heatTotal:0,protoOn:protoOnZ,emsVisits:emsVisitsZ,artQty:artQtyZ};
 
     var badgeZ=document.getElementById('sum-mode-badge');
     badgeZ.style.display='block';
@@ -1783,9 +1794,9 @@ function calcSummary(){
 
     document.getElementById('sum-ins-label').textContent='Est. Insurance Pays';
     document.getElementById('sum-visits').textContent=totalVisits+' visits';
-    document.getElementById('sum-total').textContent=fmt(insTotalZ);
+    document.getElementById('sum-total').textContent=fmt(insTotalZ+selfPayTotalZ);
     document.getElementById('sum-ins').textContent=fmt(insTotalZ);
-    document.getElementById('sum-pt').textContent=fmt(0);
+    document.getElementById('sum-pt').textContent=fmt(selfPayTotalZ);
 
     var rowsZ='';
     if(VISIT_LIMIT_26.indexOf(carrier)!==-1 && totalVisits>26){
@@ -1799,12 +1810,21 @@ function calcSummary(){
       rowsZ+='<div class="sum-row" style="opacity:.6;font-size:10px;margin-top:6px">Additional / protocol services</div>';
       extraLinesZ.forEach(i=>{var lbl=i.qty>1?i.name+' ×'+i.qty:i.name;rowsZ+=`<div class="sum-row"><span>${lbl}</span><span>${fmt(i.price*i.qty)}</span></div>`;});
     }
-    rowsZ+='<div class="sum-row bold" style="margin-top:6px"><span>Patient responsibility (Medicaid — no balance billing)</span><span>$0.00</span></div>';
+    if(selfPayLinesZ.length){
+      rowsZ+='<div class="sum-row" style="opacity:.6;font-size:10px;margin-top:6px">Not covered by Medicaid/VA — patient pays in full</div>';
+      selfPayLinesZ.forEach(i=>{var lbl=i.qty>1?i.name+' ×'+i.qty:i.name;rowsZ+=`<div class="sum-row" style="color:rgba(255,200,100,.9)"><span>${lbl}</span><span>${fmt(i.price*i.qty)}</span></div>`;});
+    }
+    rowsZ+='<div class="sum-row bold" style="margin-top:6px"><span>Patient responsibility — covered services (Medicaid — no balance billing)</span><span>$0.00</span></div>';
+    if(selfPayTotalZ>0){
+      rowsZ+=`<div class="sum-row bold"><span>Patient responsibility — non-covered services</span><span>${fmt(selfPayTotalZ)}</span></div>`;
+    }
     document.getElementById('breakdown-rows').innerHTML=rowsZ;
 
     document.getElementById('nonpar-disclaimer').style.display='none';
     var noteElZ=document.getElementById('sum-note');
-    noteElZ.textContent='$0 patient responsibility — Medicaid/VA rules prohibit balance billing. Estimate based on verified allowable rates, not a guarantee of coverage.';
+    noteElZ.textContent=(selfPayTotalZ>0
+      ? '$0 patient responsibility on covered services — Medicaid/VA rules prohibit balance billing. Shockwave/Dry Needling are not covered benefits and are billed to the patient in full. Estimate based on verified allowable rates, not a guarantee of coverage.'
+      : '$0 patient responsibility — Medicaid/VA rules prohibit balance billing. Estimate based on verified allowable rates, not a guarantee of coverage.');
     noteElZ.style.display='inline-block';
     document.getElementById('summary-wrap').style.display='block';
     return;
@@ -1947,6 +1967,7 @@ function calcSummary(){
   extraTotal+=exam99214Rate*2; // mid + end through insurance
   extraLines.push({name:'Re-exam 99214 (mid + end visits)',price:exam99214Rate,qty:2});
 
+  var selfPayTotal=0, selfPayLines=[];
   document.querySelectorAll('.tx-row.active').forEach(function(el){
     var price=parseFloat(el.dataset.price)||0;
     var type=el.dataset.type;
@@ -1955,20 +1976,28 @@ function calcSummary(){
     var codeMap={'CMT – Spinal':'98940','CMT – Non-Spinal':'98943','Therapeutic Exercise':'97110',
       'Neuromuscular Re-ed.':'97112','Therapeutic Activities':'97530','97012':'97012',
       'Cervical Extension Traction':'97012'};
+    var qty=parseInt(el.dataset.qty)||1;
+    // Services insurance never covers (Shockwave, Dry Needling) are billed 100% to the
+    // patient — they must NOT flow through the deductible/co-insurance split below.
+    if(el.dataset.selfpay==='1'){
+      selfPayTotal+=price*qty;
+      selfPayLines.push({name,price,qty});
+      return;
+    }
     if(type==='pervisit'){
       perVisitTotal+=price;
       perVisitLines.push({name,price,qty:totalVisits});
     } else {
-      var qty=parseInt(el.dataset.qty)||1;
       extraTotal+=price*qty;
       extraLines.push({name,price,qty});
     }
   });
 
   var recurringTotal=perVisitTotal*totalVisits;
-  var totalBilled=recurringTotal+extraTotal;
-  var ptDeductible=Math.min(dedLeft,totalBilled);
-  var afterDed=Math.max(0,totalBilled-ptDeductible);
+  var insBillableTotal=recurringTotal+extraTotal; // only the amount actually billed to insurance
+  var totalBilled=insBillableTotal+selfPayTotal; // full plan cost, for display
+  var ptDeductible=Math.min(dedLeft,insBillableTotal);
+  var afterDed=Math.max(0,insBillableTotal-ptDeductible);
   var ptCoins=0,insCoins=0;
   if(copayDollar>0){ptCoins=copayDollar*totalVisits;insCoins=Math.max(0,afterDed-ptCoins);}
   else if(copayPct>0){ptCoins=afterDed*copayPct;insCoins=afterDed*(1-copayPct);}
@@ -1976,9 +2005,9 @@ function calcSummary(){
   var ptTotal=ptDeductible+Math.max(0,ptCoins);
   var heatTotal=protoOn?10*totalVisits:0;
   var exam99214Start=32.50; // 50% of $65 UCR, patient-pay — always applies
-  ptTotal+=heatTotal+exam99214Start;
+  ptTotal+=heatTotal+exam99214Start+selfPayTotal;
 
-  window._lastCalc={totalVisits,totalBilled,ptTotal,perVisitLines,extraLines,ptDeductible,ptCoins,copayPct,copayDollar,afterDed,insCoins:Math.max(0,insCoins),cashMode:false,carrier,heatTotal,protoOn,emsVisits,artQty};
+  window._lastCalc={totalVisits,totalBilled,ptTotal,perVisitLines,extraLines,selfPayLines,ptDeductible,ptCoins,copayPct,copayDollar,afterDed,insCoins:Math.max(0,insCoins),cashMode:false,carrier,heatTotal,protoOn,emsVisits,artQty};
 
   var badge=document.getElementById('sum-mode-badge');
   badge.style.display='block';
@@ -1999,6 +2028,10 @@ function calcSummary(){
   if(extraLines.length){
     rows+='<div class="sum-row" style="opacity:.6;font-size:10px;margin-top:6px">Additional / protocol services</div>';
     extraLines.forEach(i=>{var lbl=i.qty>1?i.name+' ×'+i.qty:i.name;rows+=`<div class="sum-row"><span>${lbl}</span><span>${fmt(i.price*i.qty)}</span></div>`;});
+  }
+  if(selfPayLines.length){
+    rows+='<div class="sum-row" style="opacity:.6;font-size:10px;margin-top:6px">Not covered by insurance — patient pays in full</div>';
+    selfPayLines.forEach(i=>{var lbl=i.qty>1?i.name+' ×'+i.qty:i.name;rows+=`<div class="sum-row" style="color:rgba(255,200,100,.9)"><span>${lbl}</span><span>${fmt(i.price*i.qty)}</span></div>`;});
   }
   if(protoOn){
     rows+=`<div class="sum-row" style="color:rgba(255,200,100,.9)"><span>Heat Therapy (97010) ×${totalVisits} — patient-pay only</span><span>${fmt(heatTotal)}</span></div>`;
