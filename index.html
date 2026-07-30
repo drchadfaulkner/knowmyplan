@@ -683,7 +683,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
           <div class="tx-info"><div class="tx-name">Orthotic Pelvic Stabilizer</div><div class="tx-code">L3020</div></div>
           <div class="tx-right"><span class="tx-price">$580</span></div>
         </div>
-        <div class="tx-row" id="tx-enzymes" data-price="31.20" data-type="qty" data-qty="1" onclick="toggleTx(this)">
+        <div class="tx-row" id="tx-enzymes" data-price="31.20" data-type="qty" data-qty="1" data-selfpay="1" onclick="toggleTx(this)">
           <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
           <div class="tx-info"><div class="tx-name">Ligament Enzymes</div><div class="tx-code">$31.20 / bottle</div></div>
           <div class="tx-right">
@@ -1727,6 +1727,20 @@ function getRate(code){
   return 0;
 }
 
+// Gym membership is never a covered insurance benefit — if it's turned on and NOT
+// marked complimentary, it's a real out-of-pocket add-on for the patient, billed in
+// full regardless of carrier.
+function getGymCost(){
+  if(!window._gymOn || window._gymComp) return 0;
+  var wk=parseInt(document.getElementById('freq-weeks').value)||12;
+  var months=Math.max(1,Math.round(wk/4.33));
+  return 39*months;
+}
+function getGymMonths(){
+  var wk=parseInt(document.getElementById('freq-weeks').value)||12;
+  return Math.max(1,Math.round(wk/4.33));
+}
+
 function calcSummary(){
   var pw=parseInt(document.getElementById('freq-per-week').value)||2;
   var wk=parseInt(document.getElementById('freq-weeks').value)||12;
@@ -1801,6 +1815,13 @@ function calcSummary(){
         extraLinesZ.push({name,price:rate,qty});
       }
     });
+
+    // Gym membership — never a covered benefit; add as a real patient charge when on and not comped.
+    var gymCostZ=getGymCost();
+    if(gymCostZ>0){
+      selfPayTotalZ+=gymCostZ;
+      selfPayLinesZ.push({name:'Integrity Gym Membership ('+getGymMonths()+' mo)',price:gymCostZ,qty:1});
+    }
 
     window._lastCalc={totalVisits,totalBilled:insTotalZ+selfPayTotalZ,ptTotal:selfPayTotalZ,perVisitLines:perVisitLinesZ,extraLines:extraLinesZ,selfPayLines:selfPayLinesZ,ptDeductible:0,ptCoins:0,copayPct:0,copayDollar:0,afterDed:0,insCoins:insTotalZ,cashMode:false,carrier,heatTotal:0,protoOn:protoOnZ,emsVisits:emsVisitsZ,artQty:artQtyZ};
 
@@ -1879,6 +1900,10 @@ function calcSummary(){
     var exam99214Cash=32.50+65+65;
     ptTotal+=exam99214Cash;
 
+    // Gym membership — never a covered benefit; add as a real patient charge when on and not comped.
+    var gymCost=getGymCost();
+    ptTotal+=gymCost;
+
     // Non-assignment reimbursement estimate — patient sees what the plan has historically
     // paid on our verified fee schedule, reimbursed directly to the patient.
     var reimbAmt=0, reimbNote='', reimbText='';
@@ -1928,6 +1953,9 @@ function calcSummary(){
       rows+=`<div class="sum-row" style="color:rgba(255,200,100,.9)"><span>Heat Therapy (97010) ×${totalVisits} — patient-pay add-on</span><span>${fmt(heatTotal)}</span></div>`;
     }
     rows+=`<div class="sum-row" style="opacity:.8"><span>Re-exam 99214 (Start 50% disc + Mid + End)</span><span>${fmt(exam99214Cash)}</span></div>`;
+    if(gymCost>0){
+      rows+=`<div class="sum-row" style="color:rgba(255,200,100,.9)"><span>Integrity Gym Membership (${getGymMonths()} mo, not covered by insurance)</span><span>${fmt(gymCost)}</span></div>`;
+    }
     if(addOnLines.length){
       rows+='<div class="sum-row" style="opacity:.6;font-size:10px;margin-top:5px">Add-on services</div>';
       addOnLines.forEach(i=>{var lbl=i.qty>1?i.name+' ×'+i.qty:i.name;rows+=`<div class="sum-row"><span>${lbl}</span><span>${fmt(i.price*i.qty)}</span></div>`;});
@@ -2016,6 +2044,13 @@ function calcSummary(){
       extraLines.push({name,price,qty});
     }
   });
+
+  // Gym membership — never a covered benefit; add as a real patient charge when on and not comped.
+  var gymCost=getGymCost();
+  if(gymCost>0){
+    selfPayTotal+=gymCost;
+    selfPayLines.push({name:'Integrity Gym Membership ('+getGymMonths()+' mo)',price:gymCost,qty:1});
+  }
 
   var recurringTotal=perVisitTotal*totalVisits;
   var insBillableTotal=recurringTotal+extraTotal; // only the amount actually billed to insurance
@@ -2158,6 +2193,7 @@ function toggleGym(){
   else{chk.style.background='';chk.style.borderColor='';ico.style.display='none';window._gymComp=false;updateGymCompUI();}
   updateGymMonthsLabel();
   updateSavings();
+  calcSummary();
 }
 function toggleGymComp(e){
   e.stopPropagation();
@@ -2165,6 +2201,7 @@ function toggleGymComp(e){
   window._gymComp=!window._gymComp;
   updateGymCompUI();
   updateSavings();
+  calcSummary();
 }
 function updateGymCompUI(){
   var wrap=document.getElementById('gym-comp-wrap');
