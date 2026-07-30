@@ -340,13 +340,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
             <option value="aetna_bh">Aetna Better Health (KY Medicaid)</option>
             <option value="wellcare_medicaid">Wellcare Medicaid</option>
             <option value="molina">Molina / Passport (KY Medicaid)</option>
+            <option value="humana">Humana Healthy Horizons (KY Medicaid)</option>
             <option value="medicaid_ffs">KY Medicaid — Fee for Service</option>
             <option value="va_ccn">VA CCN Region 2 (Optum)</option>
             <option value="medicare">Medicare (KY)</option>
             <option value="uhc">UHC / United Healthcare</option>
-            <option value="humana">Humana Healthy Horizons — NOT ACCEPTED</option>
+            <option value="anthem_ma">Anthem Medicare Advantage</option>
+            <option value="first_choice">First Choice Health</option>
+            <option value="uhc_medicaid">UHC Medicaid — NOT ACCEPTED</option>
             <option value="wellcare_hmo">Wellcare HMO / Medicare Advantage — NOT ACCEPTED</option>
-            <option value="anthem_ma">Anthem Medicare Advantage — NOT ACCEPTED</option>
             <option value="other">Other / Out-of-Network</option>
           </select>
         </div>
@@ -1341,7 +1343,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <div class="fee-payer-card investigate" data-payer="Humana">
       <div class="fee-investigate-banner">⚠ INVESTIGATE — 84% denial rate on CMT</div>
-      <div class="fee-payer-header fee-humana"><div><div class="fee-payer-name">Humana</div><div class="fee-payer-type">Verify Per-Patient</div></div><div class="fee-payer-badge danger-badge">High denial rate</div></div>
+      <div class="fee-payer-header fee-humana"><div><div class="fee-payer-name">Humana</div><div class="fee-payer-type">Healthy Horizons (KY Medicaid MCO) ACCEPTED — bill like Wellcare/Molina</div></div><div class="fee-payer-badge danger-badge">High denial rate on non-Medicaid claims</div></div>
       <table class="fee-rate-table"><thead><tr><th>CPT</th><th>Description</th><th>Rate</th></tr></thead><tbody>
         <tr class="fee-section-row"><td colspan="3">CMT — verify auth/eligibility first</td></tr>
         <tr><td><span class="fee-cpt-code">98940</span></td><td class="fee-cpt-desc">CMT 1-2 regions</td><td class="fee-rate-amount low">$12.47 avg*</td></tr>
@@ -1364,7 +1366,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <tr class="fee-section-row"><td colspan="3">Therapy &amp; E/M</td></tr>
         <tr><td colspan="2" class="fee-cpt-desc" style="padding:8px 12px;color:#EF4444;font-weight:500">❌ Not covered — bill patient directly</td><td class="fee-rate-amount na">N/A</td></tr>
       </tbody></table>
-      <div class="fee-rules-area"><span class="fee-rule-pill required">COLLECT FROM PATIENT at visit</span><span class="fee-rule-pill required">Box 27 = NO</span></div>
+      <div class="fee-rules-area"><span class="fee-rule-pill required">COLLECT FROM PATIENT at visit</span><span class="fee-rule-pill required">Box 27 = NO</span><span class="fee-rule-pill required">🚨 Non-Assignment of Benefits form REQUIRED before first visit</span><span class="fee-rule-pill covered">Plan reimburses PATIENT at rates above + co-pay refund</span></div>
     </div>
 
   </div>
@@ -1380,7 +1382,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="fee-rule-item danger"><span class="fee-rule-dot">🚨</span><span><strong>Wellcare has TWO products</strong> — Medicaid (PAR, we bill normally) vs HMO/Medicare Advantage (NON-PAR, we should not be billing). VERIFY WHICH ONE at every new patient check-in. Get Non-Assignment of Benefits form signed for any Wellcare HMO patient.</span></div>
       <div class="fee-rule-item success"><span class="fee-rule-dot">💰</span><span><strong>VA CCN pays best overall</strong> — verified ~35% ABOVE published schedule. 98942=$47.74, 99214=$93.23.</span></div>
       <div class="fee-rule-item success"><span class="fee-rule-dot">💰</span><span><strong>BCBS 97530</strong> = $67.50, highest therapy rate of any payer.</span></div>
-      <div class="fee-rule-item danger"><span class="fee-rule-dot">🏥</span><span><strong>Anthem Medicare Advantage</strong> — NON-PAR. Collect full payment at time of service.</span></div>
+      <div class="fee-rule-item danger"><span class="fee-rule-dot">🏥</span><span><strong>Anthem Medicare Advantage</strong> — NON-PAR, non-assignment. Collect full payment at time of service; plan reimburses the PATIENT at its fee schedule plus co-pay refund. Non-Assignment of Benefits form required.</span></div>
+      <div class="fee-rule-item success"><span class="fee-rule-dot">✓</span><span><strong>Humana Healthy Horizons (KY Medicaid)</strong> — ACCEPTED. Bill like Wellcare Medicaid / Molina: AT + GP modifiers, $0 patient responsibility, 26 visit limit. Never bill 98943.</span></div>
+      <div class="fee-rule-item danger"><span class="fee-rule-dot">🚫</span><span><strong>UHC Medicaid</strong> — NOT ACCEPTED. Do not schedule under normal billing. (Distinct from UHC commercial, which is non-assignment.)</span></div>
+      <div class="fee-rule-item caution"><span class="fee-rule-dot">💵</span><span><strong>First Choice Health</strong> — Non-assignment. Collect at visit; patient is reimbursed ≈$45/visit no matter what services are performed. Non-Assignment of Benefits form required.</span></div>
     </div>
   </div>
 
@@ -1617,6 +1622,13 @@ var FEE = {
   medicaid_ffs: { // KY Medicaid Fee-for-Service — ⚠ investigate: 80% denial rate; confirm patient isn't actually MCO-enrolled
     '98940':0.75,'98941':26.45,'98942':32.78,'97110':20.90
   },
+  humana: { // Humana Healthy Horizons — KY Medicaid MCO, ACCEPTED, $0 patient responsibility. Billed like Wellcare/Molina. KY Medicaid schedule.
+    '98940':20.68,'98941':26.45,'98942':32.78,'98943':0, // 98943 denied 11/11 — never bill to Humana
+    '97530':21.61,'97110':20.90,'97140':17.52,'99213':42.63,'99214':67.10
+  },
+  anthem_ma: { // Anthem Medicare Advantage — NON-PAR, non-assignment. Plan reimburses the PATIENT at these verified rates (CMT only).
+    '98940':20.68,'98941':26.45,'98942':32.78
+  },
   medicare: {
     '97032':13.49,'97010':5.64,'97110':27.05,'97112':30.09,'97140':25.55,
     '97530':32.12,'97012':13.49,'98940':25.10,'98941':36.59,'98942':47.52,
@@ -1650,11 +1662,13 @@ function onCarrierChange(){
 }
 
 // Carriers we are NOT in-network with and do not see patients for under normal billing.
-var BLOCKED_CARRIERS = ['humana','wellcare_hmo','anthem_ma'];
+var BLOCKED_CARRIERS = ['uhc_medicaid','wellcare_hmo'];
 // KY Medicaid MCOs / VA CCN — in-network, $0 patient responsibility, insurance pays the verified allowable.
-var ZERO_PT_CARRIERS = ['aetna_bh','wellcare_medicaid','molina','va_ccn'];
+var ZERO_PT_CARRIERS = ['aetna_bh','wellcare_medicaid','molina','humana','va_ccn'];
+// Non-assignment carriers — patient pays at visit, plan reimburses the PATIENT directly.
+var NON_ASSIGN_CARRIERS = ['medicare','uhc','anthem_ma','first_choice'];
 // Carriers with a visible per-visit cap we should warn about.
-var VISIT_LIMIT_26 = ['aetna_bh','wellcare_medicaid','molina'];
+var VISIT_LIMIT_26 = ['aetna_bh','wellcare_medicaid','molina','humana'];
 
 function isBlockedCarrier(){ return BLOCKED_CARRIERS.indexOf(window._carrier) !== -1; }
 function isMedicaidZero(){ return ZERO_PT_CARRIERS.indexOf(window._carrier) !== -1; }
@@ -1687,10 +1701,12 @@ function updateCarrierNote(){
     va_ccn: {cls:'#EAF7EF',border:'#10B981',color:'#065F46', txt:'✅ VA CCN Region 2 (Optum) — Verified paying ~35% ABOVE published schedule, best overall rates. Prior authorization REQUIRED before first visit. Assuming $0 patient responsibility under VA authorization — confirm before scheduling.'},
     medicaid_ffs:{cls:'#FFF8EE',border:'#C9A84C',color:'#6B5200', txt:'⚠️ KY Medicaid Fee-for-Service — INVESTIGATE: 80% denial rate, therapy denied 10/10 in sample. Confirm the patient is not actually enrolled in an MCO (Molina, Wellcare, Aetna Better Health) before billing FFS. Verify eligibility every visit.'},
     medicare:{cls:'#FFF8EE',border:'#C9A84C',color:'#6B5200', txt:'⚠️ Medicare — Non-assignment. Patient pays $78/visit at time of service. We bill Medicare on your behalf; Medicare reimburses the patient directly for the adjustment only.'},
-    uhc:    {cls:'#FFF8EE',border:'#C9A84C',color:'#6B5200', txt:'⚠️ UHC / United Healthcare — Non-assignment. Patient pays $78/visit at time of service. We bill UHC on your behalf; UHC reimburses the patient a flat $45.'},
-    humana: {cls:'#FDE8E8',border:'#EF4444',color:'#7F1D1D', txt:'🚫 Humana Healthy Horizons (Medicaid) — WE DO NOT ACCEPT THIS PLAN. This patient cannot be seen under normal billing. Do not schedule.'},
+    uhc:    {cls:'#FFF8EE',border:'#C9A84C',color:'#6B5200', txt:'⚠️ UHC / United Healthcare — Non-assignment. Patient pays $78/visit at time of service. We bill UHC on your behalf; UHC reimburses the patient approximately $45 per visit, no matter what services are performed.'},
+    humana: {cls:'#EAF7EF',border:'#10B981',color:'#065F46', txt:'✅ Humana Healthy Horizons (KY Medicaid MCO) — In-network. Medicaid patient — $0 patient responsibility, do not collect co-pay/co-insurance. 26 visit/year limit. AT + GP modifiers required. Never bill 98943 to Humana (denied 11/11).'},
     wellcare_hmo:{cls:'#FDE8E8',border:'#EF4444',color:'#7F1D1D', txt:'🚫 Wellcare HMO / Medicare Advantage — NON-PAR, not accepted. This patient cannot be seen under normal billing. A signed Non-Assignment of Benefits form and doctor sign-off would be required before any exception.'},
-    anthem_ma:{cls:'#FDE8E8',border:'#EF4444',color:'#7F1D1D', txt:'🚫 Anthem Medicare Advantage — NON-PAR, not accepted. This patient cannot be seen under normal billing.'},
+    anthem_ma:{cls:'#FFF8EE',border:'#C9A84C',color:'#6B5200', txt:'⚠️ Anthem Medicare Advantage — Non-assignment. Patient pays $78/visit at time of service. We bill Anthem MA on your behalf; the plan reimburses the patient directly at its fee schedule for the adjustment, plus any co-pay refund. Non-Assignment of Benefits form REQUIRED before first visit. Box 27 = NO.'},
+    first_choice:{cls:'#FFF8EE',border:'#C9A84C',color:'#6B5200', txt:'⚠️ First Choice Health — Non-assignment. Patient pays $78/visit at time of service. We bill First Choice on your behalf; the plan reimburses the patient approximately $45 per visit, no matter what services are performed. Non-Assignment of Benefits form REQUIRED before first visit. Box 27 = NO.'},
+    uhc_medicaid:{cls:'#FDE8E8',border:'#EF4444',color:'#7F1D1D', txt:'🚫 UHC Medicaid — WE DO NOT ACCEPT THIS PLAN. This patient cannot be seen under normal billing. Do not schedule.'},
     other:  {cls:'#FFF8EE',border:'#C9A84C',color:'#6B5200', txt:'ℹ️ Out-of-network / Other carrier — Billed as cash at $78/visit. Patient is responsible for full amount at time of service.'},
     cash:   null
   };
@@ -1701,8 +1717,9 @@ function updateCarrierNote(){
 
 function isCashMode(){
   var c=window._carrier;
-  return c==='cash'||c==='medicare'||c==='uhc'||c==='other'||c==='';
+  return c==='cash'||c==='other'||c===''||NON_ASSIGN_CARRIERS.indexOf(c)!==-1;
 }
+function isNonAssign(c){ return NON_ASSIGN_CARRIERS.indexOf(c)!==-1; }
 
 function getRate(code){
   var c=window._carrier;
@@ -1789,7 +1806,7 @@ function calcSummary(){
 
     var badgeZ=document.getElementById('sum-mode-badge');
     badgeZ.style.display='block';
-    var carrierLabelZ={aetna_bh:'Aetna Better Health',wellcare_medicaid:'Wellcare Medicaid',molina:'Molina / Passport',va_ccn:'VA CCN Region 2'}[carrier]||carrier;
+    var carrierLabelZ={aetna_bh:'Aetna Better Health',wellcare_medicaid:'Wellcare Medicaid',molina:'Molina / Passport',humana:'Humana Healthy Horizons',va_ccn:'VA CCN Region 2'}[carrier]||carrier;
     badgeZ.textContent=carrierLabelZ+' — In-Network · $0 Patient Responsibility';
 
     document.getElementById('sum-ins-label').textContent='Est. Insurance Pays';
@@ -1862,22 +1879,26 @@ function calcSummary(){
     var exam99214Cash=32.50+65+65;
     ptTotal+=exam99214Cash;
 
-    // Non-assignment reimbursement estimate
+    // Non-assignment reimbursement estimate — patient sees what the plan has historically
+    // paid on our verified fee schedule, reimbursed directly to the patient.
     var reimbAmt=0, reimbNote='', reimbText='';
-    if(carrier==='medicare'){
+    if(carrier==='medicare'||carrier==='anthem_ma'){
       // Find which CMT is selected
       var cmt98940=document.getElementById('tx-98940');
       var cmt98941=document.getElementById('tx-98941');
       var cmtCode='98940';
       if(cmt98941&&cmt98941.classList.contains('active')) cmtCode='98941';
-      var cmtRate=FEE.medicare[cmtCode]||25.10;
+      var feeTbl=FEE[carrier]||{};
+      var cmtRate=feeTbl[cmtCode]||(carrier==='medicare'?25.10:20.68);
       reimbAmt=cmtRate*totalVisits;
-      reimbNote='Based on Medicare KY allowable for '+cmtCode+' ('+fmt(cmtRate)+'/visit × '+totalVisits+' visits). Medicare only reimburses the chiropractic adjustment under medical necessity guidelines.';
-      reimbText='Integrity Chiropractic is a participating, non-participating provider that bills your insurance on your behalf. Medicare chooses to send the reimbursement rather than our office. You are responsible for full payment at time of service. Based on your plan, you may be reimbursed approximately '+fmt(reimbAmt)+' directly from Medicare.';
-    } else if(carrier==='uhc'){
-      reimbAmt=45;
-      reimbNote='UHC reimburses a flat $45 regardless of services rendered.';
-      reimbText='Integrity Chiropractic is a participating, non-participating provider that bills your insurance on your behalf. UHC chooses to send the reimbursement rather than our office. You are responsible for full payment at time of service. Based on your plan, you may be reimbursed approximately '+fmt(reimbAmt)+' directly from UHC.';
+      var payerName=carrier==='medicare'?'Medicare':'Anthem Medicare Advantage';
+      reimbNote='Based on the verified '+payerName+' fee schedule for '+cmtCode+' ('+fmt(cmtRate)+'/visit × '+totalVisits+' visits) — codes this plan has paid in the past. '+(carrier==='medicare'?'Medicare only reimburses the chiropractic adjustment under medical necessity guidelines.':'Anthem MA reimburses the adjustment at its fee schedule; any plan co-pay refund would be in addition to this estimate.');
+      reimbText='Integrity Chiropractic is a participating, non-participating provider that bills your insurance on your behalf. '+payerName+' chooses to send the reimbursement to the patient rather than our office. You are responsible for full payment at time of service. Based on codes your plan has paid in the past on our fee schedule, you may be reimbursed approximately '+fmt(reimbAmt)+' directly from '+payerName+'.';
+    } else if(carrier==='uhc'||carrier==='first_choice'){
+      var payerName2=carrier==='uhc'?'UHC':'First Choice Health';
+      reimbAmt=45*totalVisits;
+      reimbNote=payerName2+' reimburses the patient approximately $45 per visit, no matter what services are performed ($45 × '+totalVisits+' visits).';
+      reimbText='Integrity Chiropractic is a participating, non-participating provider that bills your insurance on your behalf. '+payerName2+' chooses to send the reimbursement to the patient rather than our office. You are responsible for full payment at time of service. Based on your plan, you may be reimbursed approximately '+fmt(reimbAmt)+' directly from '+payerName2+' (≈$45 per visit).';
     }
 
     window._lastCalc={totalVisits,totalBilled:ptTotal,ptTotal,perVisitLines:[],extraLines:addOnLines,ptDeductible:0,ptCoins:0,copayPct:0,copayDollar:0,afterDed:0,insCoins:0,cashMode:true,carrier,reimbAmt,reimbText,reimbNote,heatTotal,exam99214Cash,protoOn,emsVisits,artQty};
@@ -1885,12 +1906,13 @@ function calcSummary(){
     // Display
     var badge=document.getElementById('sum-mode-badge');
     badge.style.display='block';
-    badge.textContent=carrier==='medicare'?'Medicare — Non-Assignment · Patient pays at visit':carrier==='uhc'?'UHC — Non-Assignment · Patient pays at visit':carrier==='other'?'Out-of-Network — Cash Rate':'Cash / Self-Pay';
+    var naLabels={medicare:'Medicare',uhc:'UHC',anthem_ma:'Anthem Medicare Advantage',first_choice:'First Choice Health'};
+    badge.textContent=isNonAssign(carrier)?naLabels[carrier]+' — Non-Assignment · Patient pays at visit':carrier==='other'?'Out-of-Network — Cash Rate':'Cash / Self-Pay';
 
     document.getElementById('sum-ins-label').textContent='Insurance Reimb. to Patient';
     document.getElementById('sum-visits').textContent=totalVisits+' visits';
     document.getElementById('sum-total').textContent=fmt(ptTotal);
-    document.getElementById('sum-ins').textContent=(carrier==='medicare'||carrier==='uhc')?fmt(reimbAmt):'N/A';
+    document.getElementById('sum-ins').textContent=isNonAssign(carrier)?fmt(reimbAmt):'N/A';
     document.getElementById('sum-pt').textContent=fmt(ptTotal);
 
     var rows='';
@@ -1912,17 +1934,19 @@ function calcSummary(){
     }
     rows+=`<div class="sum-row bold" style="margin-top:6px"><span>Patient pays at time of service</span><span>${fmt(ptTotal)}</span></div>`;
 
-    // Medicare add-on reimbursement note
-    if(carrier==='medicare'&&protoOn){
-      rows+=`<div class="sum-row" style="margin-top:8px;opacity:.75;font-size:10.5px;border-top:1px solid rgba(255,255,255,.2);padding-top:6px"><span>What We Expect Medicare to Reimburse You (Medical Necessity Guidelines)</span><span>${fmt(reimbAmt)}</span></div>`;
-      rows+=`<div class="sum-row" style="opacity:.5;font-size:10px;font-style:italic"><span>**Not a guarantee of payment</span><span></span></div>`;
+    // Non-assignment reimbursement note — shown in the patient-visible breakdown
+    if(isNonAssign(carrier)&&reimbAmt>0){
+      var reimbPayer=naLabels[carrier]||carrier;
+      var reimbLbl=carrier==='medicare'?'What We Expect Medicare to Reimburse You (Medical Necessity Guidelines)':'What We Expect '+reimbPayer+' to Reimburse You (Based on Past Payments)';
+      rows+=`<div class="sum-row" style="margin-top:8px;opacity:.75;font-size:10.5px;border-top:1px solid rgba(255,255,255,.2);padding-top:6px"><span>${reimbLbl}</span><span>${fmt(reimbAmt)}</span></div>`;
+      rows+=`<div class="sum-row" style="opacity:.5;font-size:10px;font-style:italic"><span>**Not a guarantee of payment — reimbursement goes directly to the patient</span><span></span></div>`;
     }
 
     document.getElementById('breakdown-rows').innerHTML=rows;
 
     // Non-par disclaimer block
     var disc=document.getElementById('nonpar-disclaimer');
-    if(carrier==='medicare'||carrier==='uhc'){
+    if(isNonAssign(carrier)){
       disc.style.display='block';
       document.getElementById('nonpar-text').textContent=reimbText;
       document.getElementById('nonpar-reimb-amount').textContent=fmt(reimbAmt);
