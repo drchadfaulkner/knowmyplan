@@ -606,7 +606,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
           </div>
         </div>
         <!-- Bigfoot -->
-        <div class="tx-row" id="tx-bigfoot" data-price="75" data-type="qty" data-qty="1" onclick="toggleTx(this)">
+        <div class="tx-row" id="tx-bigfoot" data-price="75" data-type="qty" data-qty="1" data-selfpay="1" onclick="toggleTx(this)">
           <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
           <div class="tx-info"><div class="tx-name">Bigfoot Heat Map<span class="tx-tm">™</span></div><div class="tx-code">per assessment</div></div>
           <div class="tx-right">
@@ -695,6 +695,78 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
             </div>
           </div>
         </div>
+        <div class="tx-row" id="tx-liftiq" data-price="25" data-type="qty" data-qty="1" data-selfpay="1" onclick="toggleTx(this)">
+          <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div class="tx-info"><div class="tx-name">Lift IQ App</div><div class="tx-code">$25 / month</div></div>
+          <div class="tx-right">
+            <span class="tx-price">$25 ea</span>
+            <div class="qty-wrap" onclick="event.stopPropagation()">
+              <button class="qty-btn" onclick="adjQty('tx-liftiq',-1)">−</button>
+              <span class="qty-val" id="qty-tx-liftiq">1</span>
+              <button class="qty-btn" onclick="adjQty('tx-liftiq',1)">+</button>
+            </div>
+          </div>
+        </div>
+        <div class="tx-row" id="tx-bands-upper" data-price="35" data-type="qty" data-qty="1" data-selfpay="1" onclick="toggleTx(this)">
+          <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div class="tx-info"><div class="tx-name">Resistance Bands — Upper</div><div class="tx-code">$35 / set</div></div>
+          <div class="tx-right">
+            <span class="tx-price">$35 ea</span>
+            <div class="qty-wrap" onclick="event.stopPropagation()">
+              <button class="qty-btn" onclick="adjQty('tx-bands-upper',-1)">−</button>
+              <span class="qty-val" id="qty-tx-bands-upper">1</span>
+              <button class="qty-btn" onclick="adjQty('tx-bands-upper',1)">+</button>
+            </div>
+          </div>
+        </div>
+        <div class="tx-row" id="tx-bands-lower" data-price="35" data-type="qty" data-qty="1" data-selfpay="1" onclick="toggleTx(this)">
+          <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div class="tx-info"><div class="tx-name">Resistance Bands — Lower</div><div class="tx-code">$35 / set</div></div>
+          <div class="tx-right">
+            <span class="tx-price">$35 ea</span>
+            <div class="qty-wrap" onclick="event.stopPropagation()">
+              <button class="qty-btn" onclick="adjQty('tx-bands-lower',-1)">−</button>
+              <span class="qty-val" id="qty-tx-bands-lower">1</span>
+              <button class="qty-btn" onclick="adjQty('tx-bands-lower',1)">+</button>
+            </div>
+          </div>
+        </div>
+        <div class="tx-row" id="tx-foamroller" data-price="35" data-type="qty" data-qty="1" data-selfpay="1" onclick="toggleTx(this)">
+          <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div class="tx-info"><div class="tx-name">Foam Roller</div><div class="tx-code">$35 ea</div></div>
+          <div class="tx-right">
+            <span class="tx-price">$35 ea</span>
+            <div class="qty-wrap" onclick="event.stopPropagation()">
+              <button class="qty-btn" onclick="adjQty('tx-foamroller',-1)">−</button>
+              <span class="qty-val" id="qty-tx-foamroller">1</span>
+              <button class="qty-btn" onclick="adjQty('tx-foamroller',1)">+</button>
+            </div>
+          </div>
+        </div>
+        <div class="tx-row" id="tx-footroller" data-price="35" data-type="qty" data-qty="1" data-selfpay="1" onclick="toggleTx(this)">
+          <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div class="tx-info"><div class="tx-name">Blue Foot Roller Balls</div><div class="tx-code">$35 ea</div></div>
+          <div class="tx-right">
+            <span class="tx-price">$35 ea</span>
+            <div class="qty-wrap" onclick="event.stopPropagation()">
+              <button class="qty-btn" onclick="adjQty('tx-footroller',-1)">−</button>
+              <span class="qty-val" id="qty-tx-footroller">1</span>
+              <button class="qty-btn" onclick="adjQty('tx-footroller',1)">+</button>
+            </div>
+          </div>
+        </div>
+        <div class="tx-row" id="tx-radroller" data-price="35" data-type="qty" data-qty="1" data-selfpay="1" onclick="toggleTx(this)">
+          <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div class="tx-info"><div class="tx-name">Rad Roller</div><div class="tx-code">$35 ea</div></div>
+          <div class="tx-right">
+            <span class="tx-price">$35 ea</span>
+            <div class="qty-wrap" onclick="event.stopPropagation()">
+              <button class="qty-btn" onclick="adjQty('tx-radroller',-1)">−</button>
+              <span class="qty-val" id="qty-tx-radroller">1</span>
+              <button class="qty-btn" onclick="adjQty('tx-radroller',1)">+</button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Gym Membership -->
@@ -710,7 +782,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
           </div>
           <div style="text-align:right;">
             <div style="font-size:13px;font-weight:600;color:var(--text-accent)">$39 / month</div>
-            <div style="font-size:10px;color:var(--text-muted)" id="gym-months-label"></div>
+          </div>
+          <div class="qty-wrap" style="display:flex;align-items:center;gap:4px" onclick="event.stopPropagation()">
+            <button class="qty-btn" onclick="adjGymUnits(-1)">−</button>
+            <span class="qty-val" id="gym-units-val">1</span>
+            <button class="qty-btn" onclick="adjGymUnits(1)">+</button>
+            <span style="font-size:10px;color:var(--text-muted);margin-left:2px">mo.</span>
           </div>
           <div style="display:flex;align-items:center;gap:8px;padding:6px 12px;border:1.5px solid var(--border-accent);border-radius:6px;cursor:pointer;transition:all .15s;" id="gym-comp-wrap" onclick="toggleGymComp(event)">
             <div id="gym-comp-check" style="width:15px;height:15px;border:1.5px solid var(--border-strong);border-radius:3px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0">
@@ -745,22 +822,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
               <span style="font-size:11px;font-weight:600;color:var(--text-accent)">Complimentary</span>
             </div>
           </div>
-          <!-- sub-items -->
-          <div id="kit-subitems" style="padding:8px 10px;background:var(--surface-1);border-radius:6px;display:flex;flex-direction:column;gap:6px;margin-bottom:10px;">
-            <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px;">Includes</div>
-            <label style="display:flex;align-items:center;gap:9px;cursor:pointer;font-size:12px;color:var(--text-primary)">
-              <input type="checkbox" id="kit-bands-upper" checked style="accent-color:var(--fill-accent);width:14px;height:14px">
-              <span>Resistance Bands — Upper</span>
-            </label>
-            <label style="display:flex;align-items:center;gap:9px;cursor:pointer;font-size:12px;color:var(--text-primary)">
-              <input type="checkbox" id="kit-bands-lower" checked style="accent-color:var(--fill-accent);width:14px;height:14px">
-              <span>Resistance Bands — Lower</span>
-            </label>
-            <label style="display:flex;align-items:center;gap:9px;cursor:pointer;font-size:12px;color:var(--text-primary)">
-              <input type="checkbox" id="kit-liftiq" checked style="accent-color:var(--fill-accent);width:14px;height:14px">
-              <span>Lift IQ App</span>
-            </label>
-          </div>
+          <div style="padding:6px 10px;font-size:10px;color:var(--text-muted);font-style:italic">Coaching / workshop access only. Bands, Lift IQ App, and other equipment are sold separately above.</div>
         </div>
       </div>
 
@@ -1728,17 +1790,25 @@ function getRate(code){
 }
 
 // Gym membership is never a covered insurance benefit — if it's turned on and NOT
-// marked complimentary, it's a real out-of-pocket add-on for the patient, billed in
-// full regardless of carrier.
+// marked complimentary, it's a real out-of-pocket add-on for the patient, billed at
+// $39 × the number of months set on the stepper (defaults to visit-frequency length,
+// staff can adjust up/down).
 function getGymCost(){
   if(!window._gymOn || window._gymComp) return 0;
-  var wk=parseInt(document.getElementById('freq-weeks').value)||12;
-  var months=Math.max(1,Math.round(wk/4.33));
-  return 39*months;
+  return 39*(window._gymUnits||1);
 }
 function getGymMonths(){
+  return window._gymUnits||1;
+}
+function computeDefaultGymMonths(){
   var wk=parseInt(document.getElementById('freq-weeks').value)||12;
   return Math.max(1,Math.round(wk/4.33));
+}
+function adjGymUnits(delta){
+  window._gymUnits=Math.max(1,(window._gymUnits||1)+delta);
+  var el=document.getElementById('gym-units-val');
+  if(el) el.textContent=window._gymUnits;
+  calcSummary();
 }
 
 function calcSummary(){
@@ -2185,13 +2255,17 @@ function updateProtoUI(){
 // ---- GYM MEMBERSHIP ----
 window._gymOn=false;
 window._gymComp=false;
+window._gymUnits=1;
 function toggleGym(){
   window._gymOn=!window._gymOn;
   var chk=document.getElementById('gym-check');
   var ico=document.getElementById('gym-check-icon');
-  if(window._gymOn){chk.style.background='var(--fill-accent)';chk.style.borderColor='var(--fill-accent)';ico.style.display='block';}
+  if(window._gymOn){
+    chk.style.background='var(--fill-accent)';chk.style.borderColor='var(--fill-accent)';ico.style.display='block';
+    window._gymUnits=computeDefaultGymMonths();
+    var uel=document.getElementById('gym-units-val'); if(uel) uel.textContent=window._gymUnits;
+  }
   else{chk.style.background='';chk.style.borderColor='';ico.style.display='none';window._gymComp=false;updateGymCompUI();}
-  updateGymMonthsLabel();
   updateSavings();
   calcSummary();
 }
@@ -2210,11 +2284,10 @@ function updateGymCompUI(){
   if(window._gymComp){wrap.style.background='var(--bg-success)';wrap.style.borderColor='var(--border-success)';chk.style.background='var(--fill-success)';chk.style.borderColor='var(--fill-success)';ico.style.display='block';}
   else{wrap.style.background='';wrap.style.borderColor='';chk.style.background='';chk.style.borderColor='';ico.style.display='none';}
 }
-function updateGymMonthsLabel(){
-  var wk=parseInt(document.getElementById('freq-weeks').value)||12;
-  var months=Math.max(1,Math.round(wk/4.33));
-  document.getElementById('gym-months-label').textContent=window._gymOn?months+' months included':'';
-}
+// Gym billing units are staff-controlled via the +/- stepper (see adjGymUnits) and no
+// longer auto-follow visit frequency once set, so this is intentionally a no-op kept
+// for backward compatibility with existing call sites.
+function updateGymMonthsLabel(){}
 
 // ---- HOME EXERCISE KIT ----
 window._kitOn=true;
@@ -2598,15 +2671,11 @@ function collectState(){
     var qtyEl = document.getElementById('qty-'+id);
     if(qtyEl) state.txQty[id] = qtyEl.textContent;
   });
-  // Checkboxes
-  ['kit-bands-upper','kit-bands-lower','kit-liftiq'].forEach(function(id){
-    var el = document.getElementById(id);
-    if(el) state.checks[id] = el.checked;
-  });
   // Protocol & gym & kit toggles
   state.protoOn = document.getElementById('proto-body').style.display !== 'none';
   state.gymOn   = window._gymOn || false;
   state.gymComp = window._gymComp || false;
+  state.gymUnits = window._gymUnits || 1;
   state.kitOn   = window._kitOn !== false;
   state.kitComp = window._kitComp || false;
   // Pay option select
@@ -2641,11 +2710,6 @@ function applyState(state){
     var el = document.getElementById('qty-'+id);
     if(el) el.textContent = state.txQty[id];
   });
-  // Checkboxes
-  Object.keys(state.checks||{}).forEach(function(id){
-    var el = document.getElementById(id);
-    if(el) el.checked = state.checks[id];
-  });
   // Protocol
   if(state.protoOn){
     document.getElementById('proto-body').style.display='block';
@@ -2654,7 +2718,15 @@ function applyState(state){
     document.getElementById('proto-check').style.borderColor='var(--navy)';
   }
   // Gym / kit
-  if(state.gymOn) { window._gymOn=true; updateGymCompUI(); }
+  if(state.gymOn) {
+    window._gymOn=true;
+    window._gymUnits = state.gymUnits || computeDefaultGymMonths();
+    var gchk=document.getElementById('gym-check'), gico=document.getElementById('gym-check-icon');
+    if(gchk){gchk.style.background='var(--fill-accent)';gchk.style.borderColor='var(--fill-accent)';}
+    if(gico) gico.style.display='block';
+    var guel=document.getElementById('gym-units-val'); if(guel) guel.textContent=window._gymUnits;
+    updateGymCompUI();
+  }
   if(state.gymComp) { window._gymComp=true; updateGymCompUI(); }
   if(!state.kitOn) { window._kitOn=false; updateKitCompUI(); }
   if(state.kitComp) { window._kitComp=true; updateKitCompUI(); }
@@ -2790,7 +2862,11 @@ function newPatient(){
   document.getElementById('proto-icon').style.display='none';
   document.getElementById('proto-check').style.background='white';
   // Reset kit/gym
-  window._gymOn=false; window._gymComp=false; window._kitOn=true; window._kitComp=false;
+  window._gymOn=false; window._gymComp=false; window._gymUnits=1; window._kitOn=true; window._kitComp=false;
+  var gchk2=document.getElementById('gym-check'), gico2=document.getElementById('gym-check-icon');
+  if(gchk2){gchk2.style.background='';gchk2.style.borderColor='';}
+  if(gico2) gico2.style.display='none';
+  var guel2=document.getElementById('gym-units-val'); if(guel2) guel2.textContent='1';
   updateGymCompUI(); updateKitCompUI();
   // Reset schedule result
   document.getElementById('sched-result').style.display='none';
