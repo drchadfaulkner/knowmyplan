@@ -767,6 +767,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
             </div>
           </div>
         </div>
+        <div class="tx-row" id="tx-fullscript" data-price="0" data-type="qty" data-qty="1" data-selfpay="1" onclick="toggleTx(this)">
+          <div class="tx-check"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.5" fill="none"/></svg></div>
+          <div class="tx-info"><div class="tx-name">Full Script</div><div class="tx-code">supplements · staff enters total</div></div>
+          <div class="tx-right" onclick="event.stopPropagation()">
+            <span style="font-size:12px;color:var(--text-muted)">$</span>
+            <input type="number" id="fullscript-amount" min="0" step="0.01" placeholder="0.00" style="width:80px;border:1.5px solid var(--border);border-radius:6px;padding:5px 8px;font-size:12.5px;font-family:inherit;text-align:right" oninput="updateFullScript()">
+          </div>
+        </div>
       </div>
 
       <!-- Gym Membership -->
@@ -1640,6 +1648,17 @@ function adjQty(id,delta){
   var next=Math.max(1,cur+delta);
   el.dataset.qty=next;
   document.getElementById('qty-'+id).textContent=next;
+  calcSummary();
+}
+
+// Full Script (supplements) — staff types the total dollar amount directly; the row's
+// data-price is kept in sync so every billing branch picks it up as a self-pay charge.
+function updateFullScript(){
+  var row=document.getElementById('tx-fullscript');
+  var inp=document.getElementById('fullscript-amount');
+  if(!row||!inp) return;
+  row.dataset.price=parseFloat(inp.value)||0;
+  row.dataset.qty=1;
   calcSummary();
 }
 
@@ -2648,7 +2667,7 @@ function collectState(){
     'ins-primary','ins-member-id','ins-secondary','ins-member-id2',
     'pt-visits-yr','chiro-visit-limit','copay-dollar','copay-pct',
     'deductible','ded-met','ded-left','ded-start','xray-coins','ins-notes',
-    'freq-per-week','freq-weeks',
+    'freq-per-week','freq-weeks','fullscript-amount',
     'ach-date','ach-num-debits','ach-debit-date',
     'sched-per-payment','sched-num-payments','sched-total',
     'ach-routing','ach-account','ach-sig-date'
@@ -2709,7 +2728,12 @@ function applyState(state){
   Object.keys(state.txQty||{}).forEach(function(id){
     var el = document.getElementById('qty-'+id);
     if(el) el.textContent = state.txQty[id];
+    // Also sync the row's dataset so calculations use the restored quantity
+    var row = document.getElementById(id);
+    if(row) row.dataset.qty = parseInt(state.txQty[id])||1;
   });
+  // Full Script — sync the typed dollar amount back into the row's price
+  updateFullScript();
   // Protocol
   if(state.protoOn){
     document.getElementById('proto-body').style.display='block';
@@ -2874,6 +2898,7 @@ function newPatient(){
   setPatientType('cash');
   document.getElementById('freq-per-week').value='2';
   document.getElementById('freq-weeks').value='12';
+  updateFullScript();
   updateVisits(); calcSummary(); updateSavings();
   document.getElementById('save-status').textContent='New patient — not yet saved';
 }
