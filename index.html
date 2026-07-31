@@ -248,6 +248,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <button onclick="showPatientList()" style="font-size:11px;padding:5px 12px;background:white;color:var(--navy);border:1.5px solid var(--navy);border-radius:5px;cursor:pointer;font-weight:600;">📂 Load Patient</button>
     <button onclick="newPatient()" style="font-size:11px;padding:5px 12px;background:linear-gradient(180deg, #FFA500, #FF6700);color:white;border:none;border-radius:5px;cursor:pointer;font-weight:600;">✕ New Patient</button>
   </div>
+  <div id="doctor-plan-panel" style="display:none;padding:10px 16px;background:#FEF9E7;border-top:1px solid var(--border);">
+    <div style="display:flex;align-items:flex-start;gap:10px;">
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;">
+          <strong style="font-size:12px;color:var(--navy);">Dr. Faulkner's Plan of Care</strong>
+          <span id="doctor-plan-badge" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:#F59E0B;color:white;white-space:nowrap;">🎙️ Dictated — Not Read</span>
+        </div>
+        <div id="doctor-plan-text" style="font-size:13px;color:#1a1a1a;white-space:pre-wrap;line-height:1.5;"></div>
+        <div id="doctor-plan-meta" style="font-size:10px;color:var(--text-muted);margin-top:4px;"></div>
+      </div>
+      <button id="doctor-plan-read-btn" onclick="markPlanRead()" style="font-size:11px;padding:5px 12px;background:var(--navy);color:white;border:none;border-radius:5px;cursor:pointer;font-weight:600;white-space:nowrap;flex-shrink:0;">✅ Mark as Read</button>
+    </div>
+  </div>
 </div>
 
 <!-- Patient List Modal -->
@@ -2702,6 +2715,11 @@ function collectState(){
   if(selCard) state.fields['ach-card-type'] = selCard.value;
   var selAcc = document.getElementById('ach-account-type');
   if(selAcc) state.fields['ach-account-type'] = selAcc.value;
+  // Doctor's Plan of Care — carried through so a normal front-desk save never clobbers it
+  state.doctorPlanOfCare = window._doctorPlanOfCare || '';
+  state.doctorPlanStatus = window._doctorPlanStatus || '';
+  state.doctorPlanAt = window._doctorPlanAt || '';
+  state.doctorPlanReadAt = window._doctorPlanReadAt || '';
   return state;
 }
 
@@ -2754,6 +2772,12 @@ function applyState(state){
   if(state.gymComp) { window._gymComp=true; updateGymCompUI(); }
   if(!state.kitOn) { window._kitOn=false; updateKitCompUI(); }
   if(state.kitComp) { window._kitComp=true; updateKitCompUI(); }
+  // Doctor's Plan of Care
+  window._doctorPlanOfCare = state.doctorPlanOfCare || '';
+  window._doctorPlanStatus = state.doctorPlanStatus || '';
+  window._doctorPlanAt = state.doctorPlanAt || '';
+  window._doctorPlanReadAt = state.doctorPlanReadAt || '';
+  renderDoctorPlanPanel();
   // Signature
   _masterSigDataUrl = state.signature || null;
   if(_masterSigDataUrl){
@@ -2784,6 +2808,36 @@ function applyState(state){
   var pp = parseFloat(document.getElementById('sched-per-payment').value)||0;
   var n  = parseInt(document.getElementById('sched-num-payments').value)||0;
   if(pp>0 && n>0) updateSchedResult(pp,n);
+}
+
+function renderDoctorPlanPanel(){
+  var panel = document.getElementById('doctor-plan-panel');
+  var badge = document.getElementById('doctor-plan-badge');
+  var textEl = document.getElementById('doctor-plan-text');
+  var metaEl = document.getElementById('doctor-plan-meta');
+  var btn = document.getElementById('doctor-plan-read-btn');
+  if(!panel) return;
+  if(!window._doctorPlanOfCare){ panel.style.display='none'; return; }
+  panel.style.display='block';
+  textEl.textContent = window._doctorPlanOfCare;
+  if(window._doctorPlanStatus === 'Read'){
+    badge.textContent = '✅ Read';
+    badge.style.background = '#059669';
+    metaEl.textContent = 'Dictated ' + (window._doctorPlanAt||'') + (window._doctorPlanReadAt ? ' · Read ' + window._doctorPlanReadAt : '');
+    btn.style.display = 'none';
+  } else {
+    badge.textContent = '🎙️ Dictated — Not Read';
+    badge.style.background = '#F59E0B';
+    metaEl.textContent = 'Dictated ' + (window._doctorPlanAt||'');
+    btn.style.display = 'inline-block';
+  }
+}
+
+function markPlanRead(){
+  window._doctorPlanStatus = 'Read';
+  window._doctorPlanReadAt = new Date().toLocaleString();
+  renderDoctorPlanPanel();
+  savePatient();
 }
 
 function savePatient(){
@@ -2892,6 +2946,9 @@ function newPatient(){
   if(gico2) gico2.style.display='none';
   var guel2=document.getElementById('gym-units-val'); if(guel2) guel2.textContent='1';
   updateGymCompUI(); updateKitCompUI();
+  // Reset Doctor's Plan of Care
+  window._doctorPlanOfCare=''; window._doctorPlanStatus=''; window._doctorPlanAt=''; window._doctorPlanReadAt='';
+  renderDoctorPlanPanel();
   // Reset schedule result
   document.getElementById('sched-result').style.display='none';
   // Re-init defaults
