@@ -2715,6 +2715,9 @@ function collectState(){
   if(selCard) state.fields['ach-card-type'] = selCard.value;
   var selAcc = document.getElementById('ach-account-type');
   if(selAcc) state.fields['ach-account-type'] = selAcc.value;
+  // Insurance carrier dropdown
+  var csEl = document.getElementById('carrier-select');
+  state.carrier = csEl ? csEl.value : '';
   // Doctor's Plan of Care — carried through so a normal front-desk save never clobbers it
   state.doctorPlanOfCare = window._doctorPlanOfCare || '';
   state.doctorPlanStatus = window._doctorPlanStatus || '';
@@ -2727,6 +2730,12 @@ function applyState(state){
   if(!state) return;
   // Patient type first
   setPatientType(state.patientType || 'cash');
+  // Insurance carrier dropdown — restore the selection (or clear it) and sync notes/calculations
+  var _cs = document.getElementById('carrier-select');
+  if(_cs){
+    _cs.value = state.carrier || '';
+    if((state.patientType || 'cash') !== 'cash') onCarrierChange();
+  }
   // Text fields
   Object.keys(state.fields||{}).forEach(function(id){
     var el = document.getElementById(id);
@@ -2752,12 +2761,20 @@ function applyState(state){
   });
   // Full Script — sync the typed dollar amount back into the row's price
   updateFullScript();
-  // Protocol
+  // Protocol — restore the internal flag too, so calculations include the 3-Phase charges
   if(state.protoOn){
+    window._protoOn = true;
     document.getElementById('proto-body').style.display='block';
     document.getElementById('proto-icon').style.display='block';
-    document.getElementById('proto-check').style.background='var(--navy)';
-    document.getElementById('proto-check').style.borderColor='var(--navy)';
+    document.getElementById('proto-check').style.background='#1E2E42';
+    document.getElementById('proto-check').style.borderColor='#1E2E42';
+    updateProtoUI();
+  } else {
+    window._protoOn = false;
+    document.getElementById('proto-body').style.display='none';
+    document.getElementById('proto-icon').style.display='none';
+    document.getElementById('proto-check').style.background='white';
+    document.getElementById('proto-check').style.borderColor='rgba(30,46,66,.4)';
   }
   // Gym / kit
   if(state.gymOn) {
